@@ -4,8 +4,8 @@ using UnityEngine;
 public class InputLineNot : UdonSharpBehaviour
 {
     public NotGate notGate;
-    float countDownTimer;
     public float timeDelayToUpdate = 0.1f;
+    float countDownTimer;
     bool startedTimer = false;
     bool inputSignal = false;
     bool inUse = false;
@@ -36,14 +36,14 @@ public class InputLineNot : UdonSharpBehaviour
     void SendUpdate()
     {
         if (inputSignal)
-        {
-            notGate.OnTrue();
+        {// if Input on Not gate is off
+            notGate.NetworkedOnFalse();
         }
         else
         {
-            notGate.OnFalse();
+            notGate.NetworkedOnTrue();
         }
-        notGate.OnPickupUseDown();
+        //notGate.Invert();
     }
 
     public bool GetInputSignal()
@@ -63,3 +63,4 @@ public class InputLineNot : UdonSharpBehaviour
         inUse = _inUse;
     }
 }
+

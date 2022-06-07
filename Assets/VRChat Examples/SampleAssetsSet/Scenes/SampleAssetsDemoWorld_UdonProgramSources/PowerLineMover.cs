@@ -5,15 +5,17 @@ public class PowerLineMover : UdonSharpBehaviour
 {
     public LineRenderer powerLine;
     public GameObject notGateObjects;
+    public GameObject on;
     public float timeDelayToActivate = 0.1f;
     InputLineNot connectedInput;
     float countDownTimer;
     bool startedTimer = false;
 
     //GameObject[] inputs;
-    GameObject[] inputs;
+    GameObject[] inputs = new GameObject[1];
     private void Start()
     {
+        // TODO find all the inputs
         //GameObject[] allObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
         //inputs = new GameObject[allObjects.Length];
         //int inputCount = 0;
@@ -59,25 +61,36 @@ public class PowerLineMover : UdonSharpBehaviour
         {
             connectedInput.SetInUse(false);
             connectedInput.SetInputSignal(false);
+            connectedInput.UpdateGate();
             connectedInput = null;
         }
     }
+    //public void TempPickUp()
+    //{
+    //    countDownTimer = timeDelayToActivate;
+    //    startedTimer = false;
+    //    if (connectedInput)
+    //    {
+    //        connectedInput.SetInUse(false);
+    //        connectedInput.SetInputSignal(false);
+    //        SendSignalUpdate();
+    //        connectedInput = null;
+    //    }
+    //}
     public override void OnDrop()
     {
         ConnectToInput();
-        // can't seem to use threads
-        //StartCoroutine("ConnectToInput");
     }
 
     public void ConnectToInput()
     {
-        startedTimer = true;
         for (int i = 0; i < inputs.Length; i++)
         {
             // if input is not in use and less than 0.2 units away connect
             if (!inputs[i].GetComponent<InputLineNot>().GetInUse() &&
                 Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
             {
+                startedTimer = true;
                 connectedInput = inputs[i].GetComponent<InputLineNot>();
                 connectedInput.SetInUse(true);
                 transform.position = inputs[i].transform.position;
@@ -89,7 +102,19 @@ public class PowerLineMover : UdonSharpBehaviour
 
     public void SendSignalUpdate()
     {
-        connectedInput.UpdateGate();
+        // null check should be needed if input line was removed(pickedUp) before timer ended.
+        if (connectedInput)
+        {
+            if (on.activeSelf)
+            {
+                connectedInput.SetInputSignal(true);
+            }
+            else
+            {
+                connectedInput.SetInputSignal(false);
+            }
+            connectedInput.UpdateGate();
+        }
     }
     //GameObject[] FindGameObjectsWithName(string name)
     //{

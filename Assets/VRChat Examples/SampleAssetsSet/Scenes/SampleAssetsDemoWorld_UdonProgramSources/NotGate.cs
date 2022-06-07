@@ -10,10 +10,6 @@ public class NotGate : UdonSharpBehaviour
     public Material green;
     public Material red;
 
-    private void Start()
-    {
-        powerLine.material = red;
-    }
     // If player moves the Gate, disconnect
     public override void OnPickup()
     {
@@ -22,11 +18,22 @@ public class NotGate : UdonSharpBehaviour
         {
             input.SetInUse(false);
             input.SetInputSignal(false);
+            input.UpdateGate();
         }
     }
+    //public void TempPickUp()
+    //{
+    //    InputLineNot input = GetComponentInChildren<InputLineNot>();
+    //    if (input)
+    //    {
+    //        input.SetInUse(false);
+    //        input.SetInputSignal(false);
+    //        input.UpdateGate();
+    //    }
+    //}
     public override void OnPickupUseDown()
     {
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Inverter");
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
     }
 
     public override void OnPlayerJoined(VRCPlayerApi player)
@@ -34,7 +41,7 @@ public class NotGate : UdonSharpBehaviour
         if (Networking.IsMaster)
         {
             if (on.activeSelf)
-            {
+            { // might be better to update just the joined player somehow
                 SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
             }
             else
@@ -43,7 +50,7 @@ public class NotGate : UdonSharpBehaviour
             }
         }
     }
-    public void Inverter()
+    public void Invert()
     {
         on.SetActive(!on.activeSelf);
         off.SetActive(!off.activeSelf);
@@ -55,18 +62,44 @@ public class NotGate : UdonSharpBehaviour
         {
             powerLine.material = red;
         }
+        InputLineNot input = GetComponentInChildren<InputLineNot>();
+        if (input && !input.GetInUse())
+        {
+            input.SetInputSignal(on.activeSelf);
+            input.UpdateGate();
+        }
     }
 
-    public void OnTrue()
+    // will likely need to SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+    // for these two functions for global sync
+    public void NetworkedOnTrue()
+    {
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+    }
+    public void NetworkedOnFalse()
+    {
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
+    }
+    void OnTrue()
     {
         on.SetActive(true);
         off.SetActive(false);
         powerLine.material = green;
+        InputLineNot input = GetComponentInChildren<InputLineNot>();
+        if (input)
+        {
+            input.UpdateGate();
+        }
     }
-    public void OnFalse()
+    void OnFalse()
     {
         on.SetActive(false);
         off.SetActive(true);
         powerLine.material = red;
+        InputLineNot input = GetComponentInChildren<InputLineNot>();
+        if (input)
+        {
+            input.UpdateGate();
+        }
     }
 }
