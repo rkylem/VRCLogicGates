@@ -102,20 +102,14 @@ public class PowerLineMover : UdonSharpBehaviour
 
     public void SendSignalUpdate()
     {
-        // null check should be needed if input line was removed(pickedUp) before timer ended.
+        // null check should be needed if input line was removed(pickedUp) before timer ended. and maybe for late jioners
         if (connectedInput)
         {
-            if (on.activeSelf)
-            {
-                connectedInput.SetInputSignal(true);
-            }
-            else
-            {
-                connectedInput.SetInputSignal(false);
-            }
+            connectedInput.SetInputSignal(on.activeSelf);
             connectedInput.UpdateGate();
         }
     }
+
     //GameObject[] FindGameObjectsWithName(string name)
     //{
     //    int a = GameObject.FindObjectsOfType<GameObject>().Length;

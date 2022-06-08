@@ -36,14 +36,13 @@ public class InputLineNot : UdonSharpBehaviour
     void SendUpdate()
     {
         if (inputSignal)
-        {// if Input on Not gate is off
+        {// if Input on, Not gate is off
             notGate.NetworkedOnFalse();
         }
         else
         {
             notGate.NetworkedOnTrue();
         }
-        //notGate.Invert();
     }
 
     public bool GetInputSignal()

@@ -7,6 +7,7 @@ public class NotGate : UdonSharpBehaviour
     public GameObject on;
     public GameObject off;
     public LineRenderer powerLine;
+    public PowerLineMover powerLineScript;
     public Material green;
     public Material red;
 
@@ -32,7 +33,7 @@ public class NotGate : UdonSharpBehaviour
     //    }
     //}
     public override void OnPickupUseDown()
-    {
+    {// seems like these netowrk even can only call public functions
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
     }
 
@@ -62,16 +63,18 @@ public class NotGate : UdonSharpBehaviour
         {
             powerLine.material = red;
         }
+        // Update gate if pickedup
         InputLineNot input = GetComponentInChildren<InputLineNot>();
         if (input && !input.GetInUse())
         {
             input.SetInputSignal(on.activeSelf);
             input.UpdateGate();
         }
+        //send singal over the powerline
+        powerLineScript.SendSignalUpdate();
     }
 
-    // will likely need to SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
-    // for these two functions for global sync
+    // might need to do the Networking.Ismaster for these
     public void NetworkedOnTrue()
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
@@ -80,26 +83,30 @@ public class NotGate : UdonSharpBehaviour
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
     }
-    void OnTrue()
+    public void OnTrue()
     {
         on.SetActive(true);
         off.SetActive(false);
         powerLine.material = green;
-        InputLineNot input = GetComponentInChildren<InputLineNot>();
-        if (input)
-        {
-            input.UpdateGate();
-        }
+
+        powerLineScript.SendSignalUpdate();
+        //InputLineNot input = GetComponentInChildren<InputLineNot>();
+        //if (input)
+        //{
+        //    input.UpdateGate();
+        //}
     }
-    void OnFalse()
+    public void OnFalse()
     {
         on.SetActive(false);
         off.SetActive(true);
         powerLine.material = red;
-        InputLineNot input = GetComponentInChildren<InputLineNot>();
-        if (input)
-        {
-            input.UpdateGate();
-        }
+
+        powerLineScript.SendSignalUpdate();
+        //InputLineNot input = GetComponentInChildren<InputLineNot>();
+        //if (input)
+        //{
+        //    input.UpdateGate();
+        //}
     }
 }
