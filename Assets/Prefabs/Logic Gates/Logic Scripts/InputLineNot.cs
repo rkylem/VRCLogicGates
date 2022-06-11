@@ -28,7 +28,7 @@ public class InputLineNot : UdonSharpBehaviour
             }
         }
     }
-    // start timer to send the update
+    // start timer to send the update in input is in use
     public void UpdateGate()
     {
         if (inUse)

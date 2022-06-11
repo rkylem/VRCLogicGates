@@ -11,8 +11,6 @@ public class PowerLineMover : UdonSharpBehaviour
     float countDownTimer;
     bool startedTimer = false;
 
-    public GameObject[] inputs;
-    //public GameObject[] inputs = new GameObject[1];
     private void Start()
     {
         // TODO find all the inputs
@@ -46,6 +44,19 @@ public class PowerLineMover : UdonSharpBehaviour
     // If player moves the powerline, disconnect
     public override void OnPickup()
     {
+        //startedTimer = false;
+        //countDownTimer = timeDelayToActivate;
+        //if (connectedInput)
+        //{
+        //    connectedInput.SetInputSignal(false);
+        //    connectedInput.SetInUse(false);
+        //    connectedInput.ForceUpdateGate();
+        //    connectedInput = null;
+        //}
+        pick();
+    }
+    public void pick()
+    {
         startedTimer = false;
         countDownTimer = timeDelayToActivate;
         if (connectedInput)
@@ -56,54 +67,46 @@ public class PowerLineMover : UdonSharpBehaviour
             connectedInput = null;
         }
     }
-    //public void TempPickUp()
-    //{
-    //    countDownTimer = timeDelayToActivate;
-    //    startedTimer = false;
-    //    if (connectedInput)
-    //    {
-    //        connectedInput.SetInUse(false);
-    //        connectedInput.SetInputSignal(false);
-    //        SendSignalUpdate();
-    //        connectedInput = null;
-    //    }
-    //}
+
     public override void OnDrop()
     {
+        //GameObject[] inputs = GetComponentInParent<Transform>().parent.GetComponentInParent<SpawnNotGate>().inputs;
+        //// try to connect to an imput.
+        //for (int i = 0; i < inputs.Length; i++)
+        //{
+        //    // if input is not in use and less than 0.2 units away connect
+        //    if (!inputs[i].GetComponent<InputLineNot>().GetInUse() &&
+        //        Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
+        //    {
+        //        startedTimer = true;
+        //        connectedInput = inputs[i].GetComponent<InputLineNot>();
+        //        connectedInput.SetInUse(true);
+        //        transform.position = inputs[i].transform.position;
+        //        transform.rotation = inputs[i].transform.rotation;
+        //        break;
+        //    }
+        //}
+        connect();
+    }
+    public void connect()
+    {
+        GameObject[] inputs = GetComponentInParent<Transform>().parent.GetComponentInParent<SpawnNotGate>().inputs;
         // try to connect to an imput.
         for (int i = 0; i < inputs.Length; i++)
         {
+            InputLineNot inputLine = inputs[i].GetComponent<InputLineNot>();
             // if input is not in use and less than 0.2 units away connect
-            if (!inputs[i].GetComponent<InputLineNot>().GetInUse() &&
-                Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
+            if (!inputLine.GetInUse() && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
             {
-                startedTimer = true;
-                connectedInput = inputs[i].GetComponent<InputLineNot>();
+                connectedInput = inputLine;
                 connectedInput.SetInUse(true);
                 transform.position = inputs[i].transform.position;
                 transform.rotation = inputs[i].transform.rotation;
+                startedTimer = true;
                 break;
             }
         }
     }
-
-    //public void ConnectToInput()
-    //{
-    //    for (int i = 0; i < inputs.Length; i++)
-    //    {
-    //        // if input is not in use and less than 0.2 units away connect
-    //        if (!inputs[i].GetComponent<InputLineNot>().GetInUse() &&
-    //            Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
-    //        {
-    //            startedTimer = true;
-    //            connectedInput = inputs[i].GetComponent<InputLineNot>();
-    //            connectedInput.SetInUse(true);
-    //            transform.position = inputs[i].transform.position;
-    //            transform.rotation = inputs[i].transform.rotation;
-    //            break;
-    //        }
-    //    }
-    //}
 
     public void SendSignalUpdate()
     {
@@ -115,20 +118,8 @@ public class PowerLineMover : UdonSharpBehaviour
         }
     }
 
-    //GameObject[] FindGameObjectsWithName(string name)
-    //{
-    //    int a = GameObject.FindObjectsOfType<GameObject>().Length;
-    //    GameObject[] arr = new GameObject[a];
-    //    int FluentNumber = 0;
-    //    for (int i = 0; i < a; i++)
-    //    {
-    //        if (GameObject.FindObjectsOfType<GameObject>()[i].name == name)
-    //        {
-    //            arr[FluentNumber] = GameObject.FindObjectsOfType<GameObject>()[i];
-    //            FluentNumber++;
-    //        }
-    //    }
-    //    System.Array.Resize(ref arr, FluentNumber);
-    //    return arr;
-    //}
+    public InputLineNot GetConnectedInput()
+    {
+        return connectedInput;
+    }
 }    

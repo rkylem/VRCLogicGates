@@ -15,26 +15,39 @@ public class NotGate : UdonSharpBehaviour
     // If player moves the Gate, disconnect
     public override void OnPickup()
     {
-        // the on powerLineScript Onpickup function disconnects the line from the gate,
-        // we can use that here
-        //InputLineNot input = GetComponentInChildren<InputLineNot>();
+        //if (input)
+        //{
+        //    input.SetInUse(false);
+        //    input.SetInputSignal(false);
+        //    input.ForceUpdateGate();
+        //}
+        pick();
+    }
+    public void pick()
+    {
         if (input)
         {
-            input.SetInUse(false);
-            input.SetInputSignal(false);
-            input.ForceUpdateGate();            
+            // figured out what is happening, we never fully disconnect the last powerline
+            // that was connected, and when we connect another powerline, that should overwrite 
+            // the old one, but it seems like it's not doing just that, I think when we connect
+            // a new powerline we need to add some code stuff there.
+            // still unsure if this will work
+            // okay, only when it's connected to its self will it need to be manually disconnected?
+            // because we don't want to disconnect from whatever it is connected to when the powerline 
+            // didn't move
+            if (powerLineScript.GetConnectedInput() == input)
+            {
+                powerLineScript.OnPickup();
+            }
+            else
+            {
+                input.SetInUse(false);
+                input.SetInputSignal(false);
+                input.ForceUpdateGate();
+            }
         }
     }
-    //public void TempPickUp()
-    //{
-    //    InputLineNot input = GetComponentInChildren<InputLineNot>();
-    //    if (input)
-    //    {
-    //        input.SetInUse(false);
-    //        input.SetInputSignal(false);
-    //        input.UpdateGate();
-    //    }
-    //}
+
     public override void OnPickupUseDown()
     {// seems like these netowrk even can only call public functions
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
@@ -67,7 +80,6 @@ public class NotGate : UdonSharpBehaviour
             powerLine.material = red;
         }
         // Update gate if pickedup
-        //InputLineNot input = GetComponentInChildren<InputLineNot>();
         if (input && !input.GetInUse())
         {
             input.SetInputSignal(on.activeSelf);
