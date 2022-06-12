@@ -73,4 +73,4 @@ crashlytics-build.properties
 
 
 # VRC Udon
-*/Assets/SerializedUdonPrograms
+Assets/SerializedUdonPrograms/
