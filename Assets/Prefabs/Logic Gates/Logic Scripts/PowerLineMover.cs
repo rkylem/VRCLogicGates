@@ -95,6 +95,7 @@ public class PowerLineMover : UdonSharpBehaviour
         for (int i = 0; i < inputs.Length; i++)
         {
             InputLineNot inputLine = inputs[i].GetComponent<InputLineNot>();
+            Debug.Log(inputLine.ToString());
             // if input is not in use and less than 0.2 units away connect
             if (!inputLine.GetInUse() && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
             {

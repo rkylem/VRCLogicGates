@@ -14,15 +14,17 @@ public class SpawnNotGate : UdonSharpBehaviour
     {
         GameObject newNotGate = VRCInstantiate(notGate);
         newNotGate.transform.parent = transform;
-        newNotGate.transform.position = new Vector3(this.transform.position.x + 0.5f, this.transform.position.y);
+        newNotGate.transform.position = new Vector3(this.transform.position.x + 0.5f, this.transform.position.y + 0.5f);
 
         GameObject[] tempArray = new GameObject[inputs.Length + 1];
+
+        //System.Array.Copy(inputs, tempArray, inputs.Length + 1);
 
         for (int i = 0; i < inputs.Length; i++)
         {
             tempArray[i] = inputs[i];
         }
-        tempArray[inputs.Length] = newNotGate;
+        tempArray[inputs.Length] = newNotGate.transform.GetChild(1).transform.GetChild(2).gameObject;
 
         inputs = tempArray;
     }
