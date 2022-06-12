@@ -15,12 +15,6 @@ public class NotGate : UdonSharpBehaviour
     // If player moves the Gate, disconnect
     public override void OnPickup()
     {
-        //if (input)
-        //{
-        //    input.SetInUse(false);
-        //    input.SetInputSignal(false);
-        //    input.ForceUpdateGate();
-        //}
         pick();
     }
     public void pick()
@@ -52,22 +46,9 @@ public class NotGate : UdonSharpBehaviour
     {// seems like these netowrk even can only call public functions
         // Plan on making this convert the object into a buffer in this case
         // make sure not to break the switch it also uses this code here
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
-    }
 
-    public override void OnPlayerJoined(VRCPlayerApi player)
-    {
-        if (Networking.IsMaster)
-        {
-            if (on.activeSelf)
-            { // might be better to update just the joined player somehow
-                SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
-            }
-            else
-            {
-                SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
-            }
-        }
+        //SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
+        Invert();
     }
     public void Invert()
     {
@@ -89,6 +70,21 @@ public class NotGate : UdonSharpBehaviour
         }
         //send singal over the powerline
         powerLineScript.SendSignalUpdate();
+    }
+
+    public override void OnPlayerJoined(VRCPlayerApi player)
+    {
+        if (Networking.IsMaster)
+        {
+            if (on.activeSelf)
+            { // might be better to update just the joined player somehow
+                SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+            }
+            else
+            {
+                SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
+            }
+        }
     }
 
     // might need to do the Networking.Ismaster for these

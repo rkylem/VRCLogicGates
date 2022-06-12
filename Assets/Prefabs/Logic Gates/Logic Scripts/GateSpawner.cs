@@ -16,18 +16,19 @@ public class GateSpawner : UdonSharpBehaviour
     {
         // maybe a switch statement here for the different gates
         // there should only be or, not, and, xor, and switch
-        CreateSwitch();
-        CreateNotGate();
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateSwitch");
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateNotGate");
+        // not sure I can or should be calling networked events inside other networked events...
     }
 
-    void CreateSwitch()
+    public void CreateSwitch()
     {
         GameObject newSwitch = VRCInstantiate(inputSwitch);
         newSwitch.transform.parent = transform;
         newSwitch.transform.position = new Vector3(transform.position.x - 0.5f, transform.position.y);
     }
 
-    void CreateNotGate()
+    public void CreateNotGate()
     {
         GameObject newNotGate = VRCInstantiate(notGate);
         newNotGate.transform.parent = transform;

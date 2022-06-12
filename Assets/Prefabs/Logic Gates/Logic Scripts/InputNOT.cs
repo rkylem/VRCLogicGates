@@ -42,11 +42,13 @@ public class InputNOT : UdonSharpBehaviour
     {
         if (inputSignal)
         {// if Input on, Not gate is off
-            notGate.NetworkedOnFalse();
+         //notGate.NetworkedOnFalse();
+            notGate.OnFalse();
         }
         else
         {
-            notGate.NetworkedOnTrue();
+            //notGate.NetworkedOnTrue();
+            notGate.OnTrue();
         }
     }
     void SendUpdate()
@@ -56,11 +58,13 @@ public class InputNOT : UdonSharpBehaviour
         {
             if (inputSignal)
             {// if Input on, Not gate is off
-                notGate.NetworkedOnFalse();
+                //notGate.NetworkedOnFalse();
+                notGate.OnFalse();
             }
             else
             {
-                notGate.NetworkedOnTrue();
+                //notGate.NetworkedOnTrue();
+                notGate.OnTrue();
             }
         }
     }
