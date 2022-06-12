@@ -10,7 +10,7 @@ public class NotGate : UdonSharpBehaviour
     public GameObject off;
     public LineRenderer powerLine;
     public PowerLineMover powerLineScript;
-    public InputLineNot input;
+    public InputNOT input;
 
     // If player moves the Gate, disconnect
     public override void OnPickup()
@@ -35,7 +35,7 @@ public class NotGate : UdonSharpBehaviour
             // okay, only when it's connected to its self will it need to be manually disconnected?
             // because we don't want to disconnect from whatever it is connected to when the powerline 
             // didn't move
-            if (powerLineScript.GetConnectedInput() == input)
+            if (powerLineScript.GetConnectedNOTInput() == input)
             {
                 powerLineScript.OnPickup();
             }
@@ -50,6 +50,8 @@ public class NotGate : UdonSharpBehaviour
 
     public override void OnPickupUseDown()
     {// seems like these netowrk even can only call public functions
+        // Plan on making this convert the object into a buffer in this case
+        // make sure not to break the switch it also uses this code here
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
     }
 
