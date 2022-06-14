@@ -3,14 +3,16 @@ using UnityEngine;
 
 public class PowerLineMover : UdonSharpBehaviour
 {
+    public GameObject on;
     public LineRenderer powerLine;
     public GameObject gateObjects;
-    public GameObject on;
     public float timeDelayToActivate = 0.2f;
+    bool startedTimer = false;
+    float countDownTimer;
+
     InputNOT inputNot;
     InputsOR inputOr;
-    float countDownTimer;
-    bool startedTimer = false;
+    InputLineSplitter inputSplitter;
     string inputType = "";
     bool usingInputA = false;
 
@@ -40,7 +42,8 @@ public class PowerLineMover : UdonSharpBehaviour
             {
                 countDownTimer = timeDelayToActivate;
                 startedTimer = false;
-                SendSignalUpdate();
+                // this might cause problems... but it should settle to the right place.
+                SendSignalUpdate(on.activeSelf);
             }
         }
     }
@@ -78,6 +81,60 @@ public class PowerLineMover : UdonSharpBehaviour
                     inputOr = null;
                 }
                 break;
+            case "Input Line Splitter":
+                if (inputSplitter)
+                {
+                    inputSplitter.input = false;
+                    inputSplitter.inUse = false;
+                    inputSplitter.ForceUpdateGate();
+                    inputSplitter = null;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    public void pick()
+    {
+        startedTimer = false;
+        countDownTimer = timeDelayToActivate;
+        switch (inputType)
+        {
+            case "Input Line NOT":
+                if (inputNot)
+                {
+                    inputNot.SetInputSignal(false);
+                    inputNot.SetInUse(false);
+                    inputNot.ForceUpdateGate();
+                    inputNot = null;
+                }
+                break;
+            case "Input Lines OR":
+                if (inputOr)
+                {
+                    if (usingInputA)
+                    {
+                        inputOr.inputA = false;
+                        inputOr.aInUse = false;
+                    }
+                    else
+                    {
+                        inputOr.inputB = false;
+                        inputOr.bInUse = false;
+                    }
+                    inputOr.ForceUpdateGate();
+                    inputOr = null;
+                }
+                break;
+            case "Input Line Splitter":
+                if (inputSplitter)
+                {
+                    inputSplitter.input = false;
+                    inputSplitter.inUse = false;
+                    inputSplitter.ForceUpdateGate();
+                    inputSplitter = null;
+                }
+                break;
             default:
                 break;
         }
@@ -100,7 +157,6 @@ public class PowerLineMover : UdonSharpBehaviour
             {
                 case "Input Line NOT":
                     InputNOT inputLineNOT = inputs[i].GetComponent<InputNOT>();
-                    Debug.Log(inputLineNOT.ToString());
                     // if input is not in use and less than 0.2 units away connect
                     if (!inputLineNOT.GetInUse() && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
                     {
@@ -114,7 +170,6 @@ public class PowerLineMover : UdonSharpBehaviour
                     break;
                 case "Input Lines OR":
                     InputsOR inputLine = inputs[i].GetComponent<InputsOR>();
-                    Debug.Log(inputLine.ToString());
                     // if input is not in use and less than 0.2 units away connect
                     if (!inputLine.aInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position) < 0.2f)
                     {
@@ -137,6 +192,19 @@ public class PowerLineMover : UdonSharpBehaviour
                         return;
                     }
                     break;
+                case "Input Line Splitter":
+                    InputLineSplitter inputLineSplitter = inputs[i].GetComponent<InputLineSplitter>();
+                    // if input is not in use and less than 0.2 units away connect
+                    if (!inputLineSplitter.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
+                    {
+                        inputSplitter = inputLineSplitter;
+                        inputSplitter.inUse = true;
+                        transform.position = inputs[i].transform.position;
+                        transform.rotation = inputs[i].transform.rotation;
+                        startedTimer = true;
+                        return;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -144,29 +212,55 @@ public class PowerLineMover : UdonSharpBehaviour
     }
 
 
-    public void SendSignalUpdate()
+    public void SendSignalUpdate(bool updateState)
     {
         switch (inputType)
         {
             case "Input Line NOT":
                 if (inputNot)
                 {// null check should be needed if input line was removed(pickedUp) before timer ended. and maybe for late jioners
-                    inputNot.SetInputSignal(on.activeSelf);
+                    inputNot.SetInputSignal(updateState);
                     inputNot.UpdateGate();
                 }
                 break;
             case "Input Lines OR":
                 if (inputOr)
                 {
+                    // right here if the input is the same input as the powerline connected is the problem...
+                    // because I'm not using a parameter, I get the value from the gates state. This means when
+                    // I disconnect the powerline I'm trying to update the gate with it's own gate state.
                     if (usingInputA)
-                    {
-                        inputOr.inputA = on.activeSelf;
+                    {// Got a cheaky workaround... if the inputs aren't in use then they can't be true
+                        if (inputOr.aInUse)
+                        {
+                            inputOr.inputA = updateState;
+                        }
+                        else
+                        {
+                            inputOr.inputA = false;
+                        }
+                        //inputOr.inputA = on.activeSelf;
                     }
                     else
                     {
-                        inputOr.inputB = on.activeSelf;
+                        if (inputOr.bInUse)
+                        {
+                            inputOr.inputB = updateState;
+                        }
+                        else
+                        {
+                            inputOr.inputB = false;
+                        }
+                        //inputOr.inputB = on.activeSelf;
                     }
                     inputOr.UpdateGate();
+                }
+                break;
+            case "Input Line Splitter":
+                if (inputSplitter)
+                {
+                    inputSplitter.input = updateState;
+                    inputSplitter.UpdateGate();
                 }
                 break;
             default:
@@ -181,5 +275,9 @@ public class PowerLineMover : UdonSharpBehaviour
     public InputsOR GetConnectedORInput()
     {
         return inputOr;
+    }
+    public InputLineSplitter GetConnectedSplitterInput()
+    {
+        return inputSplitter;
     }
 }

@@ -17,18 +17,21 @@ public class ORGate : UdonSharpBehaviour
     {
         if (input)
         {
-            if (powerLineScript.GetConnectedORInput() == input)
+            input.aInUse = false;
+            input.bInUse = false;
+            input.inputA = false;
+            input.inputB = false;
+            if ((powerLineScript.GetConnectedNOTInput() == input) || powerLineScript.GetConnectedORInput() == input ||
+                (powerLineScript.GetConnectedSplitterInput() == input))
             {
                 powerLineScript.OnPickup();
             }
-            else
-            {
-                input.aInUse = false;
-                input.bInUse = false;
-                input.inputA = false;
-                input.inputB = false;
-                input.ForceUpdateGate();
-            }
+            // not sure why I wouldn't always want to force the update when picked up
+            // oh right because the other functions also call the same function...
+            // bad performance. ForceUpdateGate can be called twice here.
+            // I could set all the values manually, I already do that for the imputs
+            // only one left is powerLineScript.GetConnectedORInput() just a little refactoring.
+            input.ForceUpdateGate();
         }
     }
 
@@ -97,7 +100,7 @@ public class ORGate : UdonSharpBehaviour
         off.SetActive(false);
         powerLine.material = green;
 
-        powerLineScript.SendSignalUpdate();
+        powerLineScript.SendSignalUpdate(true);
     }
     public void OnFalse()
     {
@@ -105,6 +108,6 @@ public class ORGate : UdonSharpBehaviour
         off.SetActive(true);
         powerLine.material = red;
 
-        powerLineScript.SendSignalUpdate();
+        powerLineScript.SendSignalUpdate(false);
     }
 }

@@ -16,7 +16,6 @@ public class InputsOR : UdonSharpBehaviour
 
     void Start()
     {
-        // dont forget to remove the scripts on the individual input lines
         countDownTimer = timeDelayToUpdate;
     }
     private void Update()
@@ -47,11 +46,13 @@ public class InputsOR : UdonSharpBehaviour
     {
         if (inputA || inputB)
         {// if either input is on, output is on
-            orGate.NetworkedOnTrue();            
+            orGate.OnTrue();
+            //orGate.NetworkedOnTrue();
         }
         else
         {
-            orGate.NetworkedOnFalse();
+            orGate.OnFalse();
+            //orGate.NetworkedOnFalse();
         }
     }
     void SendUpdate()
@@ -61,11 +62,13 @@ public class InputsOR : UdonSharpBehaviour
         {
             if (inputA || inputB)
             {// if either input is on, output is on
-                orGate.NetworkedOnTrue();
+                //orGate.NetworkedOnTrue();
+                orGate.OnTrue();
             }
             else
             {
-                orGate.NetworkedOnFalse();
+                orGate.OnFalse();
+                //orGate.NetworkedOnFalse();
             }
         }
     }

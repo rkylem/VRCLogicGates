@@ -2,15 +2,17 @@
 using UnityEngine;
 using VRC.SDKBase;
 
-public class NotGate : UdonSharpBehaviour
+public class LineSplitter : UdonSharpBehaviour
 {
     public Material green;
     public Material red;
     public GameObject on;
     public GameObject off;
-    public LineRenderer powerLine;
-    public PowerLineMover powerLineScript;
-    public InputNOT input;
+    public LineRenderer powerLineA;
+    public LineRenderer powerLineB;
+    public PowerLineMover powerLineAScript;
+    public PowerLineMover powerLineBScript;
+    public InputLineSplitter input;
 
     // If player moves the Gate, disconnect
     public override void OnPickup()
@@ -29,16 +31,21 @@ public class NotGate : UdonSharpBehaviour
             // okay, only when it's connected to its self will it need to be manually disconnected?
             // because we don't want to disconnect from whatever it is connected to when the powerline 
             // didn't move
-            if (powerLineScript.GetConnectedNOTInput() == input)
+
+            if (powerLineAScript.GetConnectedSplitterInput() == input)
             {
-                powerLineScript.OnPickup();
+                powerLineAScript.OnPickup();
             }
-            else
+            if (powerLineBScript.GetConnectedSplitterInput() == input)
             {
-                input.SetInUse(false);
-                input.SetInputSignal(false);
-                input.ForceUpdateGate();
+                powerLineBScript.OnPickup();
             }
+            // can save on some performance here some how...
+            // maybe instead of calling on Pickup I set the input to null
+            // by adding a set input function in the poweline class
+            input.inUse = false;
+            input.input = false;
+            input.ForceUpdateGate();
         }
     }
 
@@ -56,20 +63,22 @@ public class NotGate : UdonSharpBehaviour
         off.SetActive(!off.activeSelf);
         if (on.activeSelf)
         {
-            powerLine.material = green;
+            powerLineA.material = green;
+            powerLineB.material = green;
         }
         else
         {
-            powerLine.material = red;
+            powerLineA.material = red;
+            powerLineB.material = red;
         }
         // Update gate if pickedup
-        if (input && !input.GetInUse())
-        {
-            input.SetInputSignal(on.activeSelf);
+        if (input && !input.inUse)
+        {// don't fully understand this.
+            input.input  = on.activeSelf;
             input.UpdateGate();
         }
         //send singal over the powerline
-        powerLineScript.SendSignalUpdate(on.activeSelf);
+        powerLineAScript.SendSignalUpdate(on.activeSelf);
     }
 
     public override void OnPlayerJoined(VRCPlayerApi player)
@@ -100,16 +109,20 @@ public class NotGate : UdonSharpBehaviour
     {
         on.SetActive(true);
         off.SetActive(false);
-        powerLine.material = green;
+        powerLineA.material = green;
+        powerLineB.material = green;
 
-        powerLineScript.SendSignalUpdate(true);
+        powerLineAScript.SendSignalUpdate(true);
+        powerLineBScript.SendSignalUpdate(true);
     }
     public void OnFalse()
     {
         on.SetActive(false);
         off.SetActive(true);
-        powerLine.material = red;
+        powerLineA.material = red;
+        powerLineB.material = red;
 
-        powerLineScript.SendSignalUpdate(false);
+        powerLineAScript.SendSignalUpdate(false);
+        powerLineBScript.SendSignalUpdate(false);
     }
 }
