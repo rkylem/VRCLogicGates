@@ -9,10 +9,6 @@ public class GateSpawner : UdonSharpBehaviour
     public GameObject inputSplitter;
 
     public GameObject[] inputs;
-    void Start()
-    {
-        
-    }
 
     public override void Interact()
     {
@@ -23,6 +19,10 @@ public class GateSpawner : UdonSharpBehaviour
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateORGate");
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateInputSplitter");
         // not sure I can or should be calling networked events inside other networked events...
+    }
+    public void CreateNetworkedGate(string functionName)
+    {
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, functionName);
     }
 
     public void CreateSwitch()

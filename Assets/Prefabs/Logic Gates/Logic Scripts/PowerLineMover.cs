@@ -219,7 +219,15 @@ public class PowerLineMover : UdonSharpBehaviour
             case "Input Line NOT":
                 if (inputNot)
                 {// null check should be needed if input line was removed(pickedUp) before timer ended. and maybe for late jioners
-                    inputNot.SetInputSignal(updateState);
+                    
+                    if (inputNot.inUse)
+                    {
+                        inputNot.SetInputSignal(updateState);
+                    }
+                    else
+                    {
+                        inputNot.SetInputSignal(false);
+                    }
                     inputNot.UpdateGate();
                 }
                 break;
@@ -259,7 +267,14 @@ public class PowerLineMover : UdonSharpBehaviour
             case "Input Line Splitter":
                 if (inputSplitter)
                 {
-                    inputSplitter.input = updateState;
+                    if (inputSplitter.inUse)
+                    {
+                        inputSplitter.input = updateState;
+                    }
+                    else
+                    {
+                        inputSplitter.input = false;
+                    }
                     inputSplitter.UpdateGate();
                 }
                 break;

@@ -21,17 +21,20 @@ public class ORGate : UdonSharpBehaviour
             input.bInUse = false;
             input.inputA = false;
             input.inputB = false;
-            if ((powerLineScript.GetConnectedNOTInput() == input) || powerLineScript.GetConnectedORInput() == input ||
-                (powerLineScript.GetConnectedSplitterInput() == input))
+            if (powerLineScript.GetConnectedORInput() == input)
             {
                 powerLineScript.OnPickup();
+            }
+            else
+            {
+                input.ForceUpdateGate();
             }
             // not sure why I wouldn't always want to force the update when picked up
             // oh right because the other functions also call the same function...
             // bad performance. ForceUpdateGate can be called twice here.
             // I could set all the values manually, I already do that for the imputs
             // only one left is powerLineScript.GetConnectedORInput() just a little refactoring.
-            input.ForceUpdateGate();
+            
         }
     }
 
