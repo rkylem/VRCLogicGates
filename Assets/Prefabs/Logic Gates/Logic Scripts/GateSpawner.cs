@@ -10,16 +10,16 @@ public class GateSpawner : UdonSharpBehaviour
 
     public GameObject[] inputs;
 
-    public override void Interact()
-    {
-        // maybe a switch statement here for the different gates
-        // there should only be or, not, and, xor, and switch
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateSwitch");
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateNOTGate");
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateORGate");
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateInputSplitter");
-        // not sure I can or should be calling networked events inside other networked events...
-    }
+    //public override void Interact()
+    //{
+    //    // maybe a switch statement here for the different gates
+    //    // there should only be or, not, and, xor, and switch
+    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateSwitch");
+    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateNOTGate");
+    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateORGate");
+    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateInputSplitter");
+    //    // not sure I can or should be calling networked events inside other networked events...
+    //}
     public void CreateNetworkedGate(string functionName)
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, functionName);
