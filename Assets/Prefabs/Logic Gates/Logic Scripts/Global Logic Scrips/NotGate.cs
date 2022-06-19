@@ -99,6 +99,8 @@ public class NotGate : UdonSharpBehaviour
     }
 
     // might need to do the Networking.Ismaster for these
+    // I think if I transfer ownership to who picks up the object
+    // then use is master might do something.
     public void NetworkedOnTrue()
     {
         //if (Networking.IsMaster)
