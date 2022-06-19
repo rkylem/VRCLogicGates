@@ -54,8 +54,8 @@ public class LineSplitter : UdonSharpBehaviour
         // Plan on making this convert the object into a buffer in this case
         // make sure not to break the switch it also uses this code here
 
-        //SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
-        Invert();
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
+        //Invert();
     }
     public void Invert()
     {

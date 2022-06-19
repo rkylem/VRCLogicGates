@@ -23,8 +23,8 @@ public class InputNOT : UdonSharpBehaviour
             countDownTimer -= Time.deltaTime;
             if (countDownTimer <= 0)
             {
-                countDownTimer = timeDelayToUpdate;
                 startedTimer = false;
+                countDownTimer = timeDelayToUpdate;
                 SendUpdate();
             }
         }
@@ -41,15 +41,17 @@ public class InputNOT : UdonSharpBehaviour
     // useful for when you removed the connection but still need to send update
     public void ForceUpdateGate()
     {
+        startedTimer = false;
+        countDownTimer = timeDelayToUpdate;
         if (inputSignal)
         {// if Input on, Not gate is off
-         //notGate.NetworkedOnFalse();
-            notGate.OnFalse();
+            notGate.NetworkedOnFalse();
+            //notGate.OnFalse();
         }
         else
         {
-            //notGate.NetworkedOnTrue();
-            notGate.OnTrue();
+            notGate.NetworkedOnTrue();
+            //notGate.OnTrue();
         }
     }
     void SendUpdate()
@@ -59,13 +61,13 @@ public class InputNOT : UdonSharpBehaviour
         {
             if (inputSignal)
             {// if Input on, Not gate is off
-                //notGate.NetworkedOnFalse();
-                notGate.OnFalse();
+                notGate.NetworkedOnFalse();
+                //notGate.OnFalse();
             }
             else
             {
-                //notGate.NetworkedOnTrue();
-                notGate.OnTrue();
+                notGate.NetworkedOnTrue();
+                //notGate.OnTrue();
             }
         }
     }

@@ -1,9 +1,9 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-public class InputLineSplitter : UdonSharpBehaviour
+public class LocalInputSplitter : UdonSharpBehaviour
 {
-    public LineSplitter lineSplitter;
+    public LocalSplitter lineSplitter;
 
     public float timeDelayToUpdate = 0.2f;
     float countDownTimer;
@@ -18,7 +18,6 @@ public class InputLineSplitter : UdonSharpBehaviour
     }
     private void Update()
     {
-        // update delay
         if (startedTimer)
         {
             countDownTimer -= Time.deltaTime;
@@ -30,7 +29,6 @@ public class InputLineSplitter : UdonSharpBehaviour
             }
         }
     }
-    // start timer to send the update in input is in use
     public void UpdateGate()
     {
         if (inUse)
@@ -38,26 +36,21 @@ public class InputLineSplitter : UdonSharpBehaviour
             startedTimer = true;
         }
     }
-    // This function will force the gate to update if the input is in use or not.
-    // useful for when you removed the connection but still need to send update
     public void ForceUpdateGate()
     {
         if (input)
-        {// if input is on, output is on
+        {
             lineSplitter.OnTrue();
-            //orGate.NetworkedOnTrue();
         }
         else
         {
             lineSplitter.OnFalse();
-            //orGate.NetworkedOnFalse();
         }
     }
     void SendUpdate()
     {
-        // if still in use after the timer
         if (inUse && input)
-        {// little bit simpler
+        {
             lineSplitter.OnTrue();
         }
         else

@@ -1,5 +1,6 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 public class GateSpawner : UdonSharpBehaviour
 {
@@ -10,19 +11,41 @@ public class GateSpawner : UdonSharpBehaviour
 
     public GameObject[] inputs;
 
-    //public override void Interact()
+    //public override void OnPlayerJoined(VRCPlayerApi player)
     //{
-    //    // maybe a switch statement here for the different gates
-    //    // there should only be or, not, and, xor, and switch
-    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateSwitch");
-    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateNOTGate");
-    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateORGate");
-    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateInputSplitter");
-    //    // not sure I can or should be calling networked events inside other networked events...
+    //    if (Networking.IsMaster)
+    //    {
+    //        for (int i = 0; i < inputs.Length; i++)
+    //        {
+    //            Debug.Log(inputs[i].name);
+    //        }
+    //        CreateSwitch();
+    //    }
     //}
-    public void CreateNetworkedGate(string functionName)
+    //public void CreateNetworkedGate(string functionName)
+    //{
+    //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, functionName);
+    //}
+
+    public void CreateGate(string functionName)
     {
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, functionName);
+        switch (functionName)
+        {
+            case "CreateSwitch":
+                CreateSwitch();
+                break;
+            case "CreateNOTGate":
+                CreateNOTGate();
+                break;
+            case "CreateORGate":
+                CreateORGate();
+                break;
+            case "CreateInputSplitter":
+                CreateInputSplitter();
+                break;
+            default:
+                break;
+        }
     }
 
     public void CreateSwitch()
@@ -47,7 +70,7 @@ public class GateSpawner : UdonSharpBehaviour
             tempArray[i] = inputs[i];
         }
         // we want the input line object specifically.
-        tempArray[inputs.Length] = newNotGate.transform.GetChild(1).GetChild(2).gameObject;
+        tempArray[inputs.Length] = newNotGate.transform.GetChild(0).GetChild(0).gameObject;
 
         inputs = tempArray;
     }
@@ -63,7 +86,7 @@ public class GateSpawner : UdonSharpBehaviour
         {
             tempArray[i] = inputs[i];
         }
-        tempArray[inputs.Length] = newOrGate.transform.GetChild(1).GetChild(2).gameObject;
+        tempArray[inputs.Length] = newOrGate.transform.GetChild(0).GetChild(0).gameObject;
 
         inputs = tempArray;
     }
@@ -79,7 +102,7 @@ public class GateSpawner : UdonSharpBehaviour
         {
             tempArray[i] = inputs[i];
         }
-        tempArray[inputs.Length] = newInputSplitter.transform.GetChild(3).GetChild(2).gameObject;
+        tempArray[inputs.Length] = newInputSplitter.transform.GetChild(0).GetChild(0).gameObject;
 
         inputs = tempArray;
     }

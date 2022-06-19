@@ -7,6 +7,7 @@ public class CallFunctionOfGateSpawner : UdonSharpBehaviour
 
     public override void Interact()
     {
-        spawner.CreateNetworkedGate(functionToCall);
+        //spawner.CreateNetworkedGate(functionToCall);
+        spawner.CreateGate(functionToCall);
     }
 }

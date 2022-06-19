@@ -1,5 +1,6 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 public class PowerLineMover : UdonSharpBehaviour
 {
@@ -40,8 +41,8 @@ public class PowerLineMover : UdonSharpBehaviour
             countDownTimer -= Time.deltaTime;
             if (countDownTimer <= 0)
             {
-                countDownTimer = timeDelayToActivate;
                 startedTimer = false;
+                countDownTimer = timeDelayToActivate;
                 // this might cause problems... but it should settle to the right place.
                 SendSignalUpdate(on.activeSelf);
             }
@@ -141,10 +142,43 @@ public class PowerLineMover : UdonSharpBehaviour
     }
 
     public override void OnDrop()
-    {
+    {// might need to network this function
         ConnectToGate();
     }
-    
+    // when they join everyone needs to be on the same page so the lines should be connected
+    public override void OnPlayerJoined(VRCPlayerApi player)
+    {// might need to network this.
+        //reset everything
+        if (Networking.IsMaster)
+        {
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "FixJoinPlayer");
+        }
+    }
+    public void FixJoinPlayer()
+    {
+        startedTimer = false;
+        countDownTimer = timeDelayToActivate;
+        if (inputNot)
+        {
+            inputNot.inputSignal = false;
+            inputNot.SetInUse(false);
+        }
+        if (inputOr)
+        {
+            usingInputA = false;
+            inputOr.aInUse = false;
+            inputOr.bInUse = false;
+            inputOr.inputA = false;
+            inputOr.inputB = false;
+        }
+        if (inputSplitter)
+        {
+            inputSplitter.inUse = false;
+            inputSplitter.input = false;
+        }
+        //and reconnect everything
+        ConnectToGate();
+    }
     public void ConnectToGate()
     {
         GameObject[] inputs = GetComponentInParent<Transform>().parent.GetComponentInParent<GateSpawner>().inputs;
@@ -211,7 +245,6 @@ public class PowerLineMover : UdonSharpBehaviour
         }
     }
 
-
     public void SendSignalUpdate(bool updateState)
     {
         switch (inputType)
@@ -219,7 +252,6 @@ public class PowerLineMover : UdonSharpBehaviour
             case "Input Line NOT":
                 if (inputNot)
                 {// null check should be needed if input line was removed(pickedUp) before timer ended. and maybe for late jioners
-                    
                     if (inputNot.inUse)
                     {
                         inputNot.SetInputSignal(updateState);

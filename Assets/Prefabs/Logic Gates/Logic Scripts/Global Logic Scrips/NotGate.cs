@@ -14,21 +14,25 @@ public class NotGate : UdonSharpBehaviour
 
     // If player moves the Gate, disconnect
     public override void OnPickup()
-    {
-        pick();
+    {// might need to network this
+        if (input)
+        {
+            if (powerLineScript.GetConnectedNOTInput() == input)
+            {
+                powerLineScript.OnPickup();
+            }
+            else
+            {
+                input.SetInUse(false);
+                input.SetInputSignal(false);
+                input.ForceUpdateGate();
+            }
+        }
     }
     public void pick()
     {
         if (input)
         {
-            // figured out what is happening, we never fully disconnect the last powerline
-            // that was connected, and when we connect another powerline, that should overwrite 
-            // the old one, but it seems like it's not doing just that, I think when we connect
-            // a new powerline we need to add some code stuff there.
-            // still unsure if this will work
-            // okay, only when it's connected to its self will it need to be manually disconnected?
-            // because we don't want to disconnect from whatever it is connected to when the powerline 
-            // didn't move
             if (powerLineScript.GetConnectedNOTInput() == input)
             {
                 powerLineScript.OnPickup();
@@ -45,12 +49,16 @@ public class NotGate : UdonSharpBehaviour
     public override void OnPickupUseDown()
     {// seems like these netowrk even can only call public functions
         // Plan on making this convert the object into a buffer in this case
-        // make sure not to break the switch it also uses this code here
+        //// make sure not to break the switch it also uses this code here
 
-        //SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
+        //if (Networking.IsMaster)
+        //{
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "NetworkInvert");
+        //}
         Invert();
     }
-    public void Invert()
+
+    public void NetworkInvert()
     {
         on.SetActive(!on.activeSelf);
         off.SetActive(!off.activeSelf);
@@ -62,6 +70,9 @@ public class NotGate : UdonSharpBehaviour
         {
             powerLine.material = red;
         }
+    }
+    public void Invert()
+    {
         // Update gate if pickedup
         if (input && !input.GetInUse())
         {
@@ -90,26 +101,30 @@ public class NotGate : UdonSharpBehaviour
     // might need to do the Networking.Ismaster for these
     public void NetworkedOnTrue()
     {
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+        //if (Networking.IsMaster)
+        //{
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+        //}
+        powerLineScript.SendSignalUpdate(true);
     }
     public void NetworkedOnFalse()
     {
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
+        //if (Networking.IsMaster)
+        //{
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
+        //}
+        powerLineScript.SendSignalUpdate(false);
     }
     public void OnTrue()
     {
         on.SetActive(true);
         off.SetActive(false);
         powerLine.material = green;
-
-        powerLineScript.SendSignalUpdate(true);
     }
     public void OnFalse()
     {
         on.SetActive(false);
         off.SetActive(true);
         powerLine.material = red;
-
-        powerLineScript.SendSignalUpdate(false);
     }
 }

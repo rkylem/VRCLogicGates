@@ -44,15 +44,17 @@ public class InputsOR : UdonSharpBehaviour
     // useful for when you removed the connection but still need to send update
     public void ForceUpdateGate()
     {
+        startedTimer = false;
+        countDownTimer = timeDelayToUpdate;
         if (inputA || inputB)
         {// if either input is on, output is on
-            orGate.OnTrue();
-            //orGate.NetworkedOnTrue();
+            //orGate.OnTrue();
+            orGate.NetworkedOnTrue();
         }
         else
         {
-            orGate.OnFalse();
-            //orGate.NetworkedOnFalse();
+            //orGate.OnFalse();
+            orGate.NetworkedOnFalse();
         }
     }
     void SendUpdate()
@@ -62,13 +64,13 @@ public class InputsOR : UdonSharpBehaviour
         {
             if (inputA || inputB)
             {// if either input is on, output is on
-                //orGate.NetworkedOnTrue();
-                orGate.OnTrue();
+                orGate.NetworkedOnTrue();
+                //orGate.OnTrue();
             }
             else
             {
-                orGate.OnFalse();
-                //orGate.NetworkedOnFalse();
+                //orGate.OnFalse();
+                orGate.NetworkedOnFalse();
             }
         }
     }
