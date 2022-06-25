@@ -13,6 +13,8 @@ public class ChatController : UdonSharpBehaviour
     ///<Summary>The receiver we want to handle chat events.</Summary>
     public EventReceiver receiver;
 
+    public AudioSource sendSound;
+
     public string[] badWords;
     private int maxMessageLength;
 
@@ -40,6 +42,11 @@ public class ChatController : UdonSharpBehaviour
             receiver.SendEvent("ChatMessage", message.Replace(",", "|"));
         }
 
+        // Just assuming the message sent might need to send to all
+        if (sendSound)
+        {
+            sendSound.Play();
+        }
         input.text = null;
     }
 

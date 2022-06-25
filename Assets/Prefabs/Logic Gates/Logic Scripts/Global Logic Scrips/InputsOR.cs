@@ -26,8 +26,8 @@ public class InputsOR : UdonSharpBehaviour
             countDownTimer -= Time.deltaTime;
             if (countDownTimer <= 0)
             {
-                countDownTimer = timeDelayToUpdate;
                 startedTimer = false;
+                countDownTimer = timeDelayToUpdate;
                 SendUpdate();
             }
         }
@@ -74,4 +74,14 @@ public class InputsOR : UdonSharpBehaviour
             }
         }
     }
+
+    public void ResetInputs()
+    {
+        startedTimer = false;
+        countDownTimer = timeDelayToUpdate;
+        aInUse = false;
+        bInUse = false;
+        inputA = false;
+        inputB = false;
+    }    
 }

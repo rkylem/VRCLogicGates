@@ -45,10 +45,12 @@ public class ORGate : UdonSharpBehaviour
             if (on.activeSelf)
             { // might be better to update just the joined player somehow
                 SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+                powerLineScript.SendSignalUpdate(true);
             }
             else
             {
                 SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
+                powerLineScript.SendSignalUpdate(false);
             }
         }
     }
@@ -86,25 +88,23 @@ public class ORGate : UdonSharpBehaviour
     public void NetworkedOnTrue()
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+        powerLineScript.SendSignalUpdate(true);
     }
     public void NetworkedOnFalse()
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
+        powerLineScript.SendSignalUpdate(false);
     }
     public void OnTrue()
     {
         on.SetActive(true);
         off.SetActive(false);
         powerLine.material = green;
-
-        powerLineScript.SendSignalUpdate(true);
     }
     public void OnFalse()
     {
         on.SetActive(false);
         off.SetActive(true);
         powerLine.material = red;
-
-        powerLineScript.SendSignalUpdate(false);
     }
 }

@@ -28,8 +28,8 @@ public class LocalPowerlineMover : UdonSharpBehaviour
     {
         if (holding && pickedUp)
         {
-            powerLine.SetPosition(0, gateObjects.transform.position - transform.parent.GetComponent<Transform>().position);
-            powerLine.SetPosition(1, transform.position - transform.parent.GetComponent<Transform>().position);
+            powerLine.SetPosition(0, gateObjects.transform.position - transform.parent.transform.position);
+            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
         }
         
         if (startedTimer)
@@ -113,6 +113,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                         inputNot.inUse = true;
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
                     }
@@ -126,6 +127,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                         inputOr.aInUse = true;
                         transform.position = inputs[i].transform.GetChild(0).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
                     }
@@ -136,6 +138,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                         inputOr.bInUse = true;
                         transform.position = inputs[i].transform.GetChild(1).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
                     }
@@ -148,6 +151,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                         inputSplitter.inUse = true;
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
                     }
@@ -156,7 +160,6 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     break;
             }
         }
-        powerLine.SetPosition(1, transform.position - transform.parent.GetComponent<Transform>().position);
     }
 
     public void SendSignalUpdate(bool updateState)

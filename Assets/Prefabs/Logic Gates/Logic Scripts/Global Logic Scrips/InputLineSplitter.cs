@@ -24,8 +24,8 @@ public class InputLineSplitter : UdonSharpBehaviour
             countDownTimer -= Time.deltaTime;
             if (countDownTimer <= 0)
             {
-                countDownTimer = timeDelayToUpdate;
                 startedTimer = false;
+                countDownTimer = timeDelayToUpdate;
                 SendUpdate();
             }
         }
@@ -66,5 +66,12 @@ public class InputLineSplitter : UdonSharpBehaviour
         {
             lineSplitter.NetworkedOnFalse();
         }
+    }
+    public void ResetInput()
+    {
+        startedTimer = false;
+        countDownTimer = timeDelayToUpdate;
+        input = false;
+        inUse = false;
     }
 }

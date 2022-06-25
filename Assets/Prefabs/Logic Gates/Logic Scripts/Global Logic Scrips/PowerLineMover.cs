@@ -149,10 +149,11 @@ public class PowerLineMover : UdonSharpBehaviour
     public override void OnPlayerJoined(VRCPlayerApi player)
     {// might need to network this.
         //reset everything
-        if (Networking.IsMaster)
-        {
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "FixJoinPlayer");
-        }
+        //if (Networking.IsMaster)
+        //{
+        //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "FixJoinPlayer");
+        //}
+        FixJoinPlayer();
     }
     public void FixJoinPlayer()
     {
@@ -160,24 +161,80 @@ public class PowerLineMover : UdonSharpBehaviour
         countDownTimer = timeDelayToActivate;
         if (inputNot)
         {
-            inputNot.inputSignal = false;
-            inputNot.SetInUse(false);
+            inputNot.ResetInput();
         }
         if (inputOr)
         {
             usingInputA = false;
-            inputOr.aInUse = false;
-            inputOr.bInUse = false;
-            inputOr.inputA = false;
-            inputOr.inputB = false;
+            inputOr.ResetInputs();
         }
         if (inputSplitter)
         {
-            inputSplitter.inUse = false;
-            inputSplitter.input = false;
+            inputSplitter.ResetInput();
         }
         //and reconnect everything
-        ConnectToGate();
+        ConnectAllGates();
+    }
+    public void ConnectAllGates()
+    {
+        GameObject[] inputs = GetComponentInParent<Transform>().parent.GetComponentInParent<GateSpawner>().inputs;
+        // try to connect to an imput.
+        for (int i = 0; i < inputs.Length; i++)
+        {
+            // check what the object is using something specific to each gate before assigning it.            
+            inputType = inputs[i].name;
+            switch (inputType)
+            {
+                case "Input Line NOT":
+                    InputNOT inputLineNOT = inputs[i].GetComponent<InputNOT>();
+                    // if input is not in use and less than 0.2 units away connect
+                    if (!inputLineNOT.GetInUse() && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
+                    {
+                        inputNot = inputLineNOT;
+                        inputNot.SetInUse(true);
+                        transform.position = inputs[i].transform.position;
+                        transform.rotation = inputs[i].transform.rotation;
+                        startedTimer = true;
+                    }
+                    break;
+                case "Input Lines OR":
+                    InputsOR inputLine = inputs[i].GetComponent<InputsOR>();
+                    // if input is not in use and less than 0.2 units away connect
+                    if (!inputLine.aInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position) < 0.2f)
+                    {
+                        usingInputA = true;
+                        inputOr = inputLine;
+                        inputOr.aInUse = true;
+                        transform.position = inputs[i].transform.GetChild(0).transform.position;
+                        transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                        startedTimer = true;
+                    }
+                    if (!inputLine.bInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position) < 0.2f)
+                    {
+                        usingInputA = false;
+                        inputOr = inputLine;
+                        inputOr.bInUse = true;
+                        transform.position = inputs[i].transform.GetChild(1).transform.position;
+                        transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                        startedTimer = true;
+                    }
+                    break;
+                case "Input Line Splitter":
+                    InputLineSplitter inputLineSplitter = inputs[i].GetComponent<InputLineSplitter>();
+                    // if input is not in use and less than 0.2 units away connect
+                    if (!inputLineSplitter.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
+                    {
+                        inputSplitter = inputLineSplitter;
+                        inputSplitter.inUse = true;
+                        transform.position = inputs[i].transform.position;
+                        transform.rotation = inputs[i].transform.rotation;
+                        startedTimer = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     public void ConnectToGate()
     {

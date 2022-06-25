@@ -54,10 +54,10 @@ public class LineSplitter : UdonSharpBehaviour
         // Plan on making this convert the object into a buffer in this case
         // make sure not to break the switch it also uses this code here
 
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "Invert");
-        //Invert();
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "NetworkInvert");
+        Invert();
     }
-    public void Invert()
+    public void NetworkInvert()
     {
         on.SetActive(!on.activeSelf);
         off.SetActive(!off.activeSelf);
@@ -71,6 +71,9 @@ public class LineSplitter : UdonSharpBehaviour
             powerLineA.material = red;
             powerLineB.material = red;
         }
+    }
+    public void Invert()
+    {
         // Update gate if pickedup
         if (input && !input.inUse)
         {// don't fully understand this.
@@ -88,10 +91,14 @@ public class LineSplitter : UdonSharpBehaviour
             if (on.activeSelf)
             { // might be better to update just the joined player somehow
                 SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+                powerLineAScript.SendSignalUpdate(true);
+                powerLineBScript.SendSignalUpdate(true);
             }
             else
             {
                 SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
+                powerLineAScript.SendSignalUpdate(false);
+                powerLineBScript.SendSignalUpdate(false);
             }
         }
     }
@@ -100,10 +107,14 @@ public class LineSplitter : UdonSharpBehaviour
     public void NetworkedOnTrue()
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnTrue");
+        powerLineAScript.SendSignalUpdate(true);
+        powerLineBScript.SendSignalUpdate(true);
     }
     public void NetworkedOnFalse()
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "OnFalse");
+        powerLineAScript.SendSignalUpdate(false);
+        powerLineBScript.SendSignalUpdate(false);
     }
     public void OnTrue()
     {
@@ -111,9 +122,6 @@ public class LineSplitter : UdonSharpBehaviour
         off.SetActive(false);
         powerLineA.material = green;
         powerLineB.material = green;
-
-        powerLineAScript.SendSignalUpdate(true);
-        powerLineBScript.SendSignalUpdate(true);
     }
     public void OnFalse()
     {
@@ -121,8 +129,5 @@ public class LineSplitter : UdonSharpBehaviour
         off.SetActive(true);
         powerLineA.material = red;
         powerLineB.material = red;
-
-        powerLineAScript.SendSignalUpdate(false);
-        powerLineBScript.SendSignalUpdate(false);
     }
 }

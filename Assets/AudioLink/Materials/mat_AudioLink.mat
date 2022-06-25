@@ -110,7 +110,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SortNotes: 0
     - _SourceDistance: 10.259358
-    - _SourceSpatialBlend: 0
+    - _SourceSpatialBlend: 1
     - _SourceVolume: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -137,7 +137,7 @@ Material:
     - __dirty: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _CustomThemeColor0: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    - _CustomThemeColor0: {r: 1, g: 1, b: 0, a: 1}
     - _CustomThemeColor1: {r: 0, g: 0, b: 1, a: 1}
     - _CustomThemeColor2: {r: 1, g: 0, b: 0, a: 1}
     - _CustomThemeColor3: {r: 0, g: 1, b: 0, a: 1}

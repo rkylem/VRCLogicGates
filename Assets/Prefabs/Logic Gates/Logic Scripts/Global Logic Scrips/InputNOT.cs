@@ -71,7 +71,6 @@ public class InputNOT : UdonSharpBehaviour
             }
         }
     }
-
     public bool GetInputSignal()
     {
         return inputSignal;
@@ -87,5 +86,12 @@ public class InputNOT : UdonSharpBehaviour
     public void SetInUse(bool _inUse)
     {
         inUse = _inUse;
+    }
+    public void ResetInput()
+    {
+        startedTimer = false;
+        countDownTimer = timeDelayToUpdate;
+        inputSignal = false;
+        inUse = false;
     }
 }
