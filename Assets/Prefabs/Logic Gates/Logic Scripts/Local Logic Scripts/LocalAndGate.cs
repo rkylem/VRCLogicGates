@@ -1,7 +1,7 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-public class LocalOrGate : UdonSharpBehaviour
+public class LocalAndGate : UdonSharpBehaviour
 {
     public Material green;
     public Material red;
@@ -9,7 +9,7 @@ public class LocalOrGate : UdonSharpBehaviour
     public GameObject off;
     public LineRenderer powerLine;
     public LocalPowerlineMover powerlineScript;
-    public LocalInputsOR input;
+    public LocalInputsAnd input;
 
     // If player moves the Gate, disconnect
     public override void OnPickup()
@@ -21,7 +21,7 @@ public class LocalOrGate : UdonSharpBehaviour
             input.bInUse = false;
             input.inputA = false;
             input.inputB = false;
-            if (powerlineScript.GetConnectedORInput() == input)
+            if (powerlineScript.GetConnectedAndInput() == input)
             {
                 powerlineScript.OnPickup();
             }
@@ -37,11 +37,11 @@ public class LocalOrGate : UdonSharpBehaviour
     }
     public override void OnPickupUseDown()
     {
-        ConvertToNor();
+        ConvertToNand();
     }
-    public void ConvertToNor()
+    public void ConvertToNand()
     {
-        input.isNor = !input.isNor;
+        input.isNand = !input.isNand;
 
         on.SetActive(!on.activeSelf);
         off.SetActive(!off.activeSelf);

@@ -8,6 +8,8 @@ public class LocalInputsOR : UdonSharpBehaviour
     public float timeDelayToUpdate = 0.2f;
     float countDownTimer;
     bool startedTimer = false;
+        
+    public bool isNor = false;
 
     public bool inputA = false;
     public bool inputB = false;
@@ -42,11 +44,25 @@ public class LocalInputsOR : UdonSharpBehaviour
     {
         if (inputA || inputB)
         {
-            orGate.OnTrue();
+            if (isNor)
+            {
+                orGate.OnFalse();
+            }
+            else
+            {
+                orGate.OnTrue();
+            }
         }
         else
         {
-            orGate.OnFalse();
+            if (isNor)
+            {
+                orGate.OnTrue();
+            }
+            else
+            {
+                orGate.OnFalse();
+            }
         }
     }
     void SendUpdate()
@@ -55,11 +71,25 @@ public class LocalInputsOR : UdonSharpBehaviour
         {
             if (inputA || inputB)
             {
-                orGate.OnTrue();
+                if (isNor)
+                {
+                    orGate.OnFalse();
+                }
+                else
+                {
+                    orGate.OnTrue();
+                }
             }
             else
             {
-                orGate.OnFalse();
+                if (isNor)
+                {
+                    orGate.OnTrue();
+                }
+                else
+                {
+                    orGate.OnFalse();
+                }
             }
         }
     }

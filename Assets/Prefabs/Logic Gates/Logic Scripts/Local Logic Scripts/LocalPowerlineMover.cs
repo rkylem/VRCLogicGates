@@ -13,6 +13,8 @@ public class LocalPowerlineMover : UdonSharpBehaviour
     LocalInputNot inputNot;
     LocalInputsOR inputOr;
     LocalInputSplitter inputSplitter;
+    LocalInputsAnd inputAnd;
+    LocalInputsXor inputXor;
     string inputType = "";
     bool usingInputA = false;
     public bool holding = false;
@@ -91,6 +93,40 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     inputSplitter = null;
                 }
                 break;
+            case "Input Lines AND":
+                if (inputAnd)
+                {
+                    if (usingInputA)
+                    {
+                        inputAnd.inputA = false;
+                        inputAnd.aInUse = false;
+                    }
+                    else
+                    {
+                        inputAnd.inputB = false;
+                        inputAnd.bInUse = false;
+                    }
+                    inputAnd.ForceUpdateGate();
+                    inputAnd = null;
+                }
+                break;
+            case "Input Lines XOR":
+                if (inputXor)
+                {
+                    if (usingInputA)
+                    {
+                        inputXor.inputA = false;
+                        inputXor.aInUse = false;
+                    }
+                    else
+                    {
+                        inputXor.inputB = false;
+                        inputXor.bInUse = false;
+                    }
+                    inputXor.ForceUpdateGate();
+                    inputXor = null;
+                }
+                break;
             default:
                 break;
         }
@@ -151,6 +187,56 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                         inputSplitter.inUse = true;
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                        startedTimer = true;
+                        return;
+                    }
+                    break;
+                case "Input Lines AND":
+                    LocalInputsAnd inputLineAnd = inputs[i].GetComponent<LocalInputsAnd>();
+                    if (!inputLineAnd.aInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position) < 0.2f)
+                    {
+                        usingInputA = true;
+                        inputAnd = inputLineAnd;
+                        inputAnd.aInUse = true;
+                        transform.position = inputs[i].transform.GetChild(0).transform.position;
+                        transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                        startedTimer = true;
+                        return;
+                    }
+                    if (!inputLineAnd.bInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position) < 0.2f)
+                    {
+                        usingInputA = false;
+                        inputAnd = inputLineAnd;
+                        inputAnd.bInUse = true;
+                        transform.position = inputs[i].transform.GetChild(1).transform.position;
+                        transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                        startedTimer = true;
+                        return;
+                    }
+                    break;
+                case "Input Lines XOR":
+                    LocalInputsXor inputLineXor = inputs[i].GetComponent<LocalInputsXor>();
+                    if (!inputLineXor.aInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position) < 0.2f)
+                    {
+                        usingInputA = true;
+                        inputXor = inputLineXor;
+                        inputXor.aInUse = true;
+                        transform.position = inputs[i].transform.GetChild(0).transform.position;
+                        transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                        startedTimer = true;
+                        return;
+                    }
+                    if (!inputLineXor.bInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position) < 0.2f)
+                    {
+                        usingInputA = false;
+                        inputXor = inputLineXor;
+                        inputXor.bInUse = true;
+                        transform.position = inputs[i].transform.GetChild(1).transform.position;
+                        transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
                         powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
@@ -222,6 +308,62 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     inputSplitter.UpdateGate();
                 }
                 break;
+            case "Input Lines AND":
+                if (inputAnd)
+                {
+                    if (usingInputA)
+                    {
+                        if (inputAnd.aInUse)
+                        {
+                            inputAnd.inputA = updateState;
+                        }
+                        else
+                        {
+                            inputAnd.inputA = false;
+                        }
+                    }
+                    else
+                    {
+                        if (inputAnd.bInUse)
+                        {
+                            inputAnd.inputB = updateState;
+                        }
+                        else
+                        {
+                            inputAnd.inputB = false;
+                        }
+                    }
+                    inputAnd.UpdateGate();
+                }
+                break;
+            case "Input Lines XOR":
+                if (inputXor)
+                {
+                    if (usingInputA)
+                    {
+                        if (inputXor.aInUse)
+                        {
+                            inputXor.inputA = updateState;
+                        }
+                        else
+                        {
+                            inputXor.inputA = false;
+                        }
+                    }
+                    else
+                    {
+                        if (inputXor.bInUse)
+                        {
+                            inputXor.inputB = updateState;
+                        }
+                        else
+                        {
+                            inputXor.inputB = false;
+                        }
+                    }
+                    inputXor.UpdateGate();
+                }
+                break;
             default:
                 break;
         }
@@ -238,6 +380,14 @@ public class LocalPowerlineMover : UdonSharpBehaviour
     public LocalInputSplitter GetConnectedSplitterInput()
     {
         return inputSplitter;
+    }
+    public LocalInputsAnd GetConnectedAndInput()
+    {
+        return inputAnd;
+    }
+    public LocalInputsXor GetConnectedXorInput()
+    {
+        return inputXor;
     }
     public void SetSplitterInputNull()
     {

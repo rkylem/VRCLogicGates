@@ -8,6 +8,8 @@ public class LocalInputNot : UdonSharpBehaviour
     float countDownTimer;
     bool startedTimer = false;
 
+    public bool isInverter = true;
+
     public bool inputSignal = false;
     public bool inUse = false;
 
@@ -39,11 +41,25 @@ public class LocalInputNot : UdonSharpBehaviour
     {
         if (inputSignal)
         {
-            notGate.OnFalse();
+            if (isInverter)
+            {
+                notGate.OnFalse();
+            }
+            else
+            {
+                notGate.OnTrue();
+            }
         }
         else
         {
-            notGate.OnTrue();
+            if (isInverter)
+            {
+                notGate.OnTrue();
+            }
+            else
+            {
+                notGate.OnFalse();
+            }
         }
     }
     void SendUpdate()
@@ -52,11 +68,25 @@ public class LocalInputNot : UdonSharpBehaviour
         {
             if (inputSignal)
             {
-                notGate.OnFalse();
+                if (isInverter)
+                {
+                    notGate.OnFalse();
+                }
+                else
+                {
+                    notGate.OnTrue();
+                }
             }
             else
             {
-                notGate.OnTrue();
+                if (isInverter)
+                {
+                    notGate.OnTrue();
+                }
+                else
+                {
+                    notGate.OnFalse();
+                }
             }
         }
     }

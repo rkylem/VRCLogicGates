@@ -1,18 +1,20 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-public class LocalInputSplitter : UdonSharpBehaviour
+public class LocalInputsXor : UdonSharpBehaviour
 {
-    public LocalSplitter lineSplitter;
+    public LocalXorGate xorGate;
 
     public float timeDelayToUpdate = 0.2f;
     float countDownTimer;
     bool startedTimer = false;
 
-    public bool isInverter = false;
-        
-    public bool input = false;
-    public bool inUse = false;
+    public bool isXnor = false;
+
+    public bool inputA = false;
+    public bool inputB = false;
+    public bool aInUse = false;
+    public bool bInUse = false;
 
     void Start()
     {
@@ -33,58 +35,61 @@ public class LocalInputSplitter : UdonSharpBehaviour
     }
     public void UpdateGate()
     {
-        if (inUse)
+        if (aInUse || bInUse)
         {
             startedTimer = true;
         }
     }
     public void ForceUpdateGate()
     {
-        if (input)
+        if (inputA ^ inputB)
         {
-            if (isInverter)
+            if (isXnor)
             {
-                lineSplitter.OnFalse();
+                xorGate.OnFalse();
             }
             else
             {
-                lineSplitter.OnTrue();
+                xorGate.OnTrue();
             }
         }
         else
         {
-            if (isInverter)
+            if (isXnor)
             {
-                lineSplitter.OnTrue();
+                xorGate.OnTrue();
             }
             else
             {
-                lineSplitter.OnFalse();
+                xorGate.OnFalse();
             }
         }
     }
     void SendUpdate()
     {
-        if (inUse && input)
+        if (aInUse || bInUse)
         {
-            if (isInverter)
+            if (inputA ^ inputB)
             {
-                lineSplitter.OnFalse();
+                if (isXnor)
+                {
+                    xorGate.OnFalse();
+                }
+                else
+                {
+                    xorGate.OnTrue();
+                }
             }
             else
             {
-                lineSplitter.OnTrue();
-            }
-        }
-        else
-        {
-            if (isInverter)
-            {
-                lineSplitter.OnTrue();
-            }
-            else
-            {
-                lineSplitter.OnFalse();
+                if (isXnor)
+                {
+                    xorGate.OnTrue();
+                }
+                else
+                {
+                    xorGate.OnFalse();
+                }
             }
         }
     }

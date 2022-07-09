@@ -36,6 +36,10 @@ public class LocalNotGate : UdonSharpBehaviour
 
     public override void OnPickupUseDown()
     {
+        if (input)
+        {
+            input.isInverter = !input.isInverter;
+        }
         on.SetActive(!on.activeSelf);
         off.SetActive(!off.activeSelf);
         if (on.activeSelf)
@@ -46,11 +50,11 @@ public class LocalNotGate : UdonSharpBehaviour
         {
             powerLine.material = red;
         }
-        if (input && !input.inUse)
-        {
-            input.inputSignal = on.activeSelf;
-            input.UpdateGate();
-        }
+        //if (input && !input.inUse)
+        //{
+        //    input.inputSignal = on.activeSelf;
+        //    input.UpdateGate();
+        //}
         powerLineScript.SendSignalUpdate(on.activeSelf);
     }
 

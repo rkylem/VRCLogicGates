@@ -38,31 +38,29 @@ public class LocalSplitter : UdonSharpBehaviour
         powerLineAScript.holding = false;
         powerLineBScript.holding = false;
     }
-    //public override void OnPickupUseDown()
-    //{
-    //    Invert();
-    //}
-    //public void Invert()
-    //{
-    //    on.SetActive(!on.activeSelf);
-    //    off.SetActive(!off.activeSelf);
-    //    if (on.activeSelf)
-    //    {
-    //        powerLineA.material = green;
-    //        powerLineB.material = green;
-    //    }
-    //    else
-    //    {
-    //        powerLineA.material = red;
-    //        powerLineB.material = red;
-    //    }
-    //    if (input && !input.inUse)
-    //    {
-    //        input.input = on.activeSelf;
-    //        input.UpdateGate();
-    //    }
-    //    powerLineAScript.SendSignalUpdate(on.activeSelf);
-    //}
+    public override void OnPickupUseDown()
+    {
+        ConvertToNotSplitter();
+    }
+    public void ConvertToNotSplitter()
+    {
+        input.isInverter = !input.isInverter;
+
+        on.SetActive(!on.activeSelf);
+        off.SetActive(!off.activeSelf);
+        if (on.activeSelf)
+        {
+            powerLineA.material = green;
+            powerLineB.material = green;
+        }
+        else
+        {
+            powerLineA.material = red;
+            powerLineB.material = red;
+        }
+
+        powerLineAScript.SendSignalUpdate(on.activeSelf);
+    }
 
     public void OnTrue()
     {

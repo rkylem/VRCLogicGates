@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: Local Inputs OR
+  m_Name: Local Inputs XOR
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 881f047c3110c644abc00cd73d996aef,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 8b38994d7d905824599bb059003ecb08,
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: 76271ca7f035e7b4e8490cf26b22e9e1, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: 085abc7987e94424aaf16fa4facce53f, type: 3}
   behaviourSyncMode: 0
   behaviourIDHeapVarName: __refl_const_intnl_udonTypeID
   compileErrors: []
@@ -25,7 +25,7 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 11500000, guid: 10e9554e94b504b46a90ab26dec274c9, type: 3}
+    - {fileID: 11500000, guid: 92ea070f18214e4499b84c9e88993fc6, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -50,7 +50,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: orGate
+      Data: xorGate
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 4|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: LocalOrGate, Assembly-CSharp
+      Data: LocalXorGate, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 
@@ -77,10 +77,10 @@ MonoBehaviour:
       Data: VRCUdonUdonBehaviour
     - Name: symbolOriginalName
       Entry: 1
-      Data: orGate
+      Data: xorGate
     - Name: symbolUniqueName
       Entry: 1
-      Data: orGate
+      Data: xorGate
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -296,7 +296,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: isNor
+      Data: isXnor
     - Name: $v
       Entry: 7
       Data: 17|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -317,10 +317,10 @@ MonoBehaviour:
       Data: SystemBoolean
     - Name: symbolOriginalName
       Entry: 1
-      Data: isNor
+      Data: isXnor
     - Name: symbolUniqueName
       Entry: 1
-      Data: isNor
+      Data: isXnor
     - Name: symbolDefaultValue
       Entry: 6
       Data: 

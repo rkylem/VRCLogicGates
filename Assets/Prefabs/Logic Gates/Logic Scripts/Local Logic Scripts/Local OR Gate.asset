@@ -26,7 +26,7 @@ MonoBehaviour:
     SerializedBytes: 
     ReferencedUnityObjects:
     - {fileID: 11500000, guid: 30a07bc29cb7d2e46bb313d3d40bb860, type: 3}
-    - {fileID: 11500000, guid: 74850783251a69842b9245a2739db56e, type: 3}
+    - {fileID: 11500000, guid: 76271ca7f035e7b4e8490cf26b22e9e1, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -429,7 +429,7 @@ MonoBehaviour:
       Data: 26|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: InputsOR, Assembly-CSharp
+      Data: LocalInputsOR, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 

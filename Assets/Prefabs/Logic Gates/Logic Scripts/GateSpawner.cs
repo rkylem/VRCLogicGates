@@ -8,6 +8,8 @@ public class GateSpawner : UdonSharpBehaviour
     public GameObject notGate;
     public GameObject orGate;
     public GameObject inputSplitter;
+    public GameObject andGate;
+    public GameObject xorGate;
 
     public GameObject[] inputs;
 
@@ -42,6 +44,12 @@ public class GateSpawner : UdonSharpBehaviour
                 break;
             case "CreateInputSplitter":
                 CreateInputSplitter();
+                break;
+            case "CreateANDGate":
+                CreateANDGate();
+                break;
+            case "CreateXORGate":
+                CreateXORGate();
                 break;
             default:
                 break;
@@ -103,6 +111,38 @@ public class GateSpawner : UdonSharpBehaviour
             tempArray[i] = inputs[i];
         }
         tempArray[inputs.Length] = newInputSplitter.transform.GetChild(0).GetChild(0).gameObject;
+
+        inputs = tempArray;
+    }
+
+    public void CreateANDGate()
+    {
+        GameObject newAndGate = VRCInstantiate(andGate);
+        newAndGate.transform.parent = transform;
+        newAndGate.transform.position = new Vector3(transform.position.x + 0.5f, transform.position.y, transform.position.z + 1);
+
+        GameObject[] tempArray = new GameObject[inputs.Length + 1];
+        for (int i = 0; i < inputs.Length; i++)
+        {
+            tempArray[i] = inputs[i];
+        }
+        tempArray[inputs.Length] = newAndGate.transform.GetChild(0).GetChild(0).gameObject;
+
+        inputs = tempArray;
+    }
+
+    public void CreateXORGate()
+    {
+        GameObject newXorGate = VRCInstantiate(xorGate);
+        newXorGate.transform.parent = transform;
+        newXorGate.transform.position = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z + 1);
+
+        GameObject[] tempArray = new GameObject[inputs.Length + 1];
+        for (int i = 0; i < inputs.Length; i++)
+        {
+            tempArray[i] = inputs[i];
+        }
+        tempArray[inputs.Length] = newXorGate.transform.GetChild(0).GetChild(0).gameObject;
 
         inputs = tempArray;
     }
