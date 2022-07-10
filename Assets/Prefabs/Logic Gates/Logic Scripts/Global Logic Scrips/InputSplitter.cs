@@ -1,7 +1,7 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-public class InputLineSplitter : UdonSharpBehaviour
+public class InputSplitter : UdonSharpBehaviour
 {
     public LineSplitter lineSplitter;
 

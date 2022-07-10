@@ -13,9 +13,11 @@ public class PowerLineMover : UdonSharpBehaviour
 
     InputNOT inputNot;
     InputsOR inputOr;
-    InputLineSplitter inputSplitter;
+    InputSplitter inputSplitter;
     string inputType = "";
     bool usingInputA = false;
+
+    public bool holding = false;
 
     private void Start()
     {
@@ -33,8 +35,11 @@ public class PowerLineMover : UdonSharpBehaviour
     {
         // set powerline positions according to the parent and mover(self) positions
         // could do a check to see if it not connected to move these, might save a frame... or not
-        powerLine.SetPosition(0, gateObjects.transform.position - transform.parent.GetComponent<Transform>().position);
-        powerLine.SetPosition(1, transform.position - transform.parent.GetComponent<Transform>().position);
+        if (holding)
+        {
+            powerLine.SetPosition(0, gateObjects.transform.position - transform.parent.transform.position);
+            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+    }
         // input delay
         if (startedTimer)
         {
@@ -51,53 +56,14 @@ public class PowerLineMover : UdonSharpBehaviour
 
     // If player moves the powerline, disconnect
     public override void OnPickup()
-    {
-        startedTimer = false;
-        countDownTimer = timeDelayToActivate;
-        switch (inputType)
-        {
-            case "Input Line NOT":
-                if (inputNot)
-                {
-                    inputNot.SetInputSignal(false);
-                    inputNot.SetInUse(false);
-                    inputNot.ForceUpdateGate();
-                    inputNot = null;
-                }
-                break;
-            case "Input Lines OR":
-                if (inputOr)
-                {
-                    if (usingInputA)
-                    {
-                        inputOr.inputA = false;
-                        inputOr.aInUse = false;
-                    }
-                    else
-                    {
-                        inputOr.inputB = false;
-                        inputOr.bInUse = false;
-                    }
-                    inputOr.ForceUpdateGate();
-                    inputOr = null;
-                }
-                break;
-            case "Input Line Splitter":
-                if (inputSplitter)
-                {
-                    inputSplitter.input = false;
-                    inputSplitter.inUse = false;
-                    inputSplitter.ForceUpdateGate();
-                    inputSplitter = null;
-                }
-                break;
-            default:
-                break;
-        }
+    {// might need to network this function
+        //pick();
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "pick");
     }
     public void pick()
     {
         startedTimer = false;
+        holding = true;
         countDownTimer = timeDelayToActivate;
         switch (inputType)
         {
@@ -143,12 +109,18 @@ public class PowerLineMover : UdonSharpBehaviour
 
     public override void OnDrop()
     {// might need to network this function
-        ConnectToGate();
+        //ConnectToGate();
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "ConnectToGate");
     }
     // when they join everyone needs to be on the same page so the lines should be connected
     public override void OnPlayerJoined(VRCPlayerApi player)
     {// might need to network this.
         //reset everything
+        //if (Networking.LocalPlayer == player)
+        //{
+
+        //}
+        
         //if (Networking.IsMaster)
         //{
         //    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "FixJoinPlayer");
@@ -194,6 +166,8 @@ public class PowerLineMover : UdonSharpBehaviour
                         inputNot.SetInUse(true);
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+
                         startedTimer = true;
                     }
                     break;
@@ -207,6 +181,7 @@ public class PowerLineMover : UdonSharpBehaviour
                         inputOr.aInUse = true;
                         transform.position = inputs[i].transform.GetChild(0).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                     }
                     if (!inputLine.bInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position) < 0.2f)
@@ -216,11 +191,12 @@ public class PowerLineMover : UdonSharpBehaviour
                         inputOr.bInUse = true;
                         transform.position = inputs[i].transform.GetChild(1).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                     }
                     break;
                 case "Input Line Splitter":
-                    InputLineSplitter inputLineSplitter = inputs[i].GetComponent<InputLineSplitter>();
+                    InputSplitter inputLineSplitter = inputs[i].GetComponent<InputSplitter>();
                     // if input is not in use and less than 0.2 units away connect
                     if (!inputLineSplitter.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
                     {
@@ -228,6 +204,7 @@ public class PowerLineMover : UdonSharpBehaviour
                         inputSplitter.inUse = true;
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                     }
                     break;
@@ -238,6 +215,10 @@ public class PowerLineMover : UdonSharpBehaviour
     }
     public void ConnectToGate()
     {
+        inputNot = null;
+        inputOr = null;
+        inputSplitter = null;
+        holding = false;
         GameObject[] inputs = GetComponentInParent<Transform>().parent.GetComponentInParent<GateSpawner>().inputs;
         // try to connect to an imput.
         for (int i = 0; i < inputs.Length; i++)
@@ -252,9 +233,11 @@ public class PowerLineMover : UdonSharpBehaviour
                     if (!inputLineNOT.GetInUse() && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
                     {
                         inputNot = inputLineNOT;
+                        inputNot.notGate.connectedPowerLineScript = this;
                         inputNot.SetInUse(true);
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
                     }
@@ -266,9 +249,11 @@ public class PowerLineMover : UdonSharpBehaviour
                     {
                         usingInputA = true;
                         inputOr = inputLine;
+                        inputOr.orGate.connectedPowerLineScriptA = this;
                         inputOr.aInUse = true;
                         transform.position = inputs[i].transform.GetChild(0).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
                     }
@@ -276,22 +261,26 @@ public class PowerLineMover : UdonSharpBehaviour
                     {
                         usingInputA = false;
                         inputOr = inputLine;
+                        inputOr.orGate.connectedPowerLineScriptB = this;
                         inputOr.bInUse = true;
                         transform.position = inputs[i].transform.GetChild(1).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
                     }
                     break;
                 case "Input Line Splitter":
-                    InputLineSplitter inputLineSplitter = inputs[i].GetComponent<InputLineSplitter>();
+                    InputSplitter inputLineSplitter = inputs[i].GetComponent<InputSplitter>();
                     // if input is not in use and less than 0.2 units away connect
                     if (!inputLineSplitter.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
                     {
                         inputSplitter = inputLineSplitter;
+                        inputSplitter.lineSplitter.connectedPowerLineScript = this;
                         inputSplitter.inUse = true;
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
+                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
                         startedTimer = true;
                         return;
                     }
@@ -380,7 +369,7 @@ public class PowerLineMover : UdonSharpBehaviour
     {
         return inputOr;
     }
-    public InputLineSplitter GetConnectedSplitterInput()
+    public InputSplitter GetConnectedSplitterInput()
     {
         return inputSplitter;
     }

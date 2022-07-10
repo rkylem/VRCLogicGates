@@ -11,6 +11,8 @@ public class LocalNotGate : UdonSharpBehaviour
     public LocalPowerlineMover powerLineScript;
     public LocalInputNot input;
 
+    public LocalPowerlineMover connectedPowerLineScript;
+
     public override void OnPickup()
     {
         powerLineScript.holding = true;
@@ -26,6 +28,10 @@ public class LocalNotGate : UdonSharpBehaviour
                 input.inputSignal = false;
                 input.ForceUpdateGate();
             }
+        }
+        if (connectedPowerLineScript)
+        {
+            connectedPowerLineScript.OnPickup();
         }
     }
 

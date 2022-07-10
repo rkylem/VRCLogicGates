@@ -12,9 +12,17 @@ public class ORGate : UdonSharpBehaviour
     public PowerLineMover powerLineScript;
     public InputsOR input;
 
+    public PowerLineMover connectedPowerLineScriptA;
+    public PowerLineMover connectedPowerLineScriptB;
+
     // If player moves the Gate, disconnect
     public override void OnPickup()
     {
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "pick");
+    }
+    public void pick()
+    {
+        powerLineScript.holding = true;
         if (input)
         {
             input.aInUse = false;
@@ -30,8 +38,19 @@ public class ORGate : UdonSharpBehaviour
                 input.ForceUpdateGate();
             }
         }
+        if (connectedPowerLineScriptA)
+        {
+            connectedPowerLineScriptA.OnPickup();
+        }
+        if (connectedPowerLineScriptB)
+        {
+            connectedPowerLineScriptB.OnPickup();
+        }
     }
-
+    public override void OnDrop()
+    {
+        powerLineScript.holding = false;
+    }
     //public override void OnPickupUseDown()
     //{// seems like these netowrk even can only call public functions
     //    // Plan on making this convert the object into a NOR gate in this case    

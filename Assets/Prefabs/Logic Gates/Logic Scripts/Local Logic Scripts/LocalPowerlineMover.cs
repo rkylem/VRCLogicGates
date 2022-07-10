@@ -134,6 +134,11 @@ public class LocalPowerlineMover : UdonSharpBehaviour
 
     public override void OnDrop()
     {
+        inputOr = null;
+        inputAnd = null;
+        inputSplitter = null;
+        inputXor = null;
+        inputNot = null;
         holding = false;
         GameObject[] inputs = GetComponentInParent<Transform>().parent.GetComponentInParent<GateSpawner>().inputs;
         for (int i = 0; i < inputs.Length; i++)
@@ -146,6 +151,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     if (!inputLineNOT.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
                     {
                         inputNot = inputLineNOT;
+                        inputNot.notGate.connectedPowerLineScript = this;
                         inputNot.inUse = true;
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
@@ -160,6 +166,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     {
                         usingInputA = true;
                         inputOr = inputLine;
+                        inputOr.orGate.connectedPowerLineScriptA = this;
                         inputOr.aInUse = true;
                         transform.position = inputs[i].transform.GetChild(0).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
@@ -171,6 +178,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     {
                         usingInputA = false;
                         inputOr = inputLine;
+                        inputOr.orGate.connectedPowerLineScriptB = this;
                         inputOr.bInUse = true;
                         transform.position = inputs[i].transform.GetChild(1).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
@@ -184,6 +192,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     if (!inputLineSplitter.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
                     {
                         inputSplitter = inputLineSplitter;
+                        inputSplitter.lineSplitter.connectedPowerLineScript = this;
                         inputSplitter.inUse = true;
                         transform.position = inputs[i].transform.position;
                         transform.rotation = inputs[i].transform.rotation;
@@ -198,6 +207,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     {
                         usingInputA = true;
                         inputAnd = inputLineAnd;
+                        inputAnd.andGate.connectedPowerLineScriptA = this;
                         inputAnd.aInUse = true;
                         transform.position = inputs[i].transform.GetChild(0).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
@@ -209,6 +219,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     {
                         usingInputA = false;
                         inputAnd = inputLineAnd;
+                        inputAnd.andGate.connectedPowerLineScriptB = this;
                         inputAnd.bInUse = true;
                         transform.position = inputs[i].transform.GetChild(1).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
@@ -223,6 +234,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     {
                         usingInputA = true;
                         inputXor = inputLineXor;
+                        inputXor.xorGate.connectedPowerLineScriptA = this;
                         inputXor.aInUse = true;
                         transform.position = inputs[i].transform.GetChild(0).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
@@ -234,6 +246,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     {
                         usingInputA = false;
                         inputXor = inputLineXor;
+                        inputXor.xorGate.connectedPowerLineScriptB = this;
                         inputXor.bInUse = true;
                         transform.position = inputs[i].transform.GetChild(1).transform.position;
                         transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
@@ -388,6 +401,10 @@ public class LocalPowerlineMover : UdonSharpBehaviour
     public LocalInputsXor GetConnectedXorInput()
     {
         return inputXor;
+    }
+    public void SetNOTInputNull()
+    {
+        inputNot = null;
     }
     public void SetSplitterInputNull()
     {

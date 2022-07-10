@@ -13,6 +13,8 @@ public class LocalSplitter : UdonSharpBehaviour
     public LocalPowerlineMover powerLineBScript;
     public LocalInputSplitter input;
 
+    public LocalPowerlineMover connectedPowerLineScript;
+
     public override void OnPickup()
     {
         powerLineAScript.holding = true;
@@ -30,6 +32,10 @@ public class LocalSplitter : UdonSharpBehaviour
             {
                 powerLineBScript.SetSplitterInputNull();
             }
+        }
+        if (connectedPowerLineScript)
+        {
+            connectedPowerLineScript.OnPickup();
         }
     }
     

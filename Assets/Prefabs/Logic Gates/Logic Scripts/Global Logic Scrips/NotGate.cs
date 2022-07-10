@@ -12,25 +12,17 @@ public class NotGate : UdonSharpBehaviour
     public PowerLineMover powerLineScript;
     public InputNOT input;
 
+    public PowerLineMover connectedPowerLineScript;
+
     // If player moves the Gate, disconnect
     public override void OnPickup()
     {// might need to network this
-        if (input)
-        {
-            if (powerLineScript.GetConnectedNOTInput() == input)
-            {
-                powerLineScript.OnPickup();
-            }
-            else
-            {
-                input.SetInUse(false);
-                input.SetInputSignal(false);
-                input.ForceUpdateGate();
-            }
-        }
+        //pick();
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "pick");
     }
     public void pick()
     {
+        powerLineScript.holding = true;
         if (input)
         {
             if (powerLineScript.GetConnectedNOTInput() == input)
@@ -44,6 +36,14 @@ public class NotGate : UdonSharpBehaviour
                 input.ForceUpdateGate();
             }
         }
+        if (connectedPowerLineScript)
+        {
+            connectedPowerLineScript.OnPickup();
+        }
+    }
+    public override void OnDrop()
+    {
+        powerLineScript.holding = false;
     }
 
     public override void OnPickupUseDown()

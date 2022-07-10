@@ -11,6 +11,9 @@ public class LocalAndGate : UdonSharpBehaviour
     public LocalPowerlineMover powerlineScript;
     public LocalInputsAnd input;
 
+    public LocalPowerlineMover connectedPowerLineScriptA;
+    public LocalPowerlineMover connectedPowerLineScriptB;
+
     // If player moves the Gate, disconnect
     public override void OnPickup()
     {
@@ -29,6 +32,14 @@ public class LocalAndGate : UdonSharpBehaviour
             {
                 input.ForceUpdateGate();
             }
+        }
+        if (connectedPowerLineScriptA)
+        {
+            connectedPowerLineScriptA.OnPickup();
+        }
+        if (connectedPowerLineScriptB)
+        {
+            connectedPowerLineScriptB.OnPickup();
         }
     }
     public override void OnDrop()
