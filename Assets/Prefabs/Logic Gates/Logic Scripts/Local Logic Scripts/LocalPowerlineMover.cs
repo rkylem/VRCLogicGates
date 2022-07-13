@@ -6,6 +6,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
     public GameObject on;
     public LineRenderer powerLine;
     public GameObject gateObjects;
+    public float connectToDistance = 0.2f;
     public float timeDelayToActivate = 0.2f;
     bool startedTimer = false;
     float countDownTimer;
@@ -148,7 +149,7 @@ public class LocalPowerlineMover : UdonSharpBehaviour
             {
                 case "Input Line NOT":
                     LocalInputNot inputLineNOT = inputs[i].GetComponent<LocalInputNot>();
-                    if (!inputLineNOT.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
+                    if (!inputLineNOT.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < connectToDistance)
                     {
                         inputNot = inputLineNOT;
                         inputNot.notGate.connectedPowerLineScript = this;
@@ -162,34 +163,66 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     break;
                 case "Input Lines OR":
                     LocalInputsOR inputLine = inputs[i].GetComponent<LocalInputsOR>();
-                    if (!inputLine.aInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position) < 0.2f)
+                    float distanceToOrA = Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position);
+                    float distanceToOrB = Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position);
+                    if (distanceToOrA < distanceToOrB)
                     {
-                        usingInputA = true;
-                        inputOr = inputLine;
-                        inputOr.orGate.connectedPowerLineScriptA = this;
-                        inputOr.aInUse = true;
-                        transform.position = inputs[i].transform.GetChild(0).transform.position;
-                        transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
-                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
-                        startedTimer = true;
-                        return;
+                        if (!inputLine.aInUse && distanceToOrA < connectToDistance)
+                        {
+                            usingInputA = true;
+                            inputOr = inputLine;
+                            inputOr.orGate.connectedPowerLineScriptA = this;
+                            inputOr.aInUse = true;
+                            transform.position = inputs[i].transform.GetChild(0).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                        if (!inputLine.bInUse && distanceToOrB < connectToDistance)
+                        {
+                            usingInputA = false;
+                            inputOr = inputLine;
+                            inputOr.orGate.connectedPowerLineScriptB = this;
+                            inputOr.bInUse = true;
+                            transform.position = inputs[i].transform.GetChild(1).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
                     }
-                    if (!inputLine.bInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position) < 0.2f)
+                    else
                     {
-                        usingInputA = false;
-                        inputOr = inputLine;
-                        inputOr.orGate.connectedPowerLineScriptB = this;
-                        inputOr.bInUse = true;
-                        transform.position = inputs[i].transform.GetChild(1).transform.position;
-                        transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
-                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
-                        startedTimer = true;
-                        return;
+                        if (!inputLine.bInUse && distanceToOrB < connectToDistance)
+                        {
+                            usingInputA = false;
+                            inputOr = inputLine;
+                            inputOr.orGate.connectedPowerLineScriptB = this;
+                            inputOr.bInUse = true;
+                            transform.position = inputs[i].transform.GetChild(1).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                        if (!inputLine.aInUse && distanceToOrA < connectToDistance)
+                        {
+                            usingInputA = true;
+                            inputOr = inputLine;
+                            inputOr.orGate.connectedPowerLineScriptA = this;
+                            inputOr.aInUse = true;
+                            transform.position = inputs[i].transform.GetChild(0).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
                     }
                     break;
                 case "Input Line Splitter":
                     LocalInputSplitter inputLineSplitter = inputs[i].GetComponent<LocalInputSplitter>();
-                    if (!inputLineSplitter.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < 0.2f)
+                    if (!inputLineSplitter.inUse && Vector3.Distance(transform.position, inputs[i].transform.position) < connectToDistance)
                     {
                         inputSplitter = inputLineSplitter;
                         inputSplitter.lineSplitter.connectedPowerLineScript = this;
@@ -203,56 +236,120 @@ public class LocalPowerlineMover : UdonSharpBehaviour
                     break;
                 case "Input Lines AND":
                     LocalInputsAnd inputLineAnd = inputs[i].GetComponent<LocalInputsAnd>();
-                    if (!inputLineAnd.aInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position) < 0.2f)
+                    float distanceToAndA = Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position);
+                    float distanceToAndB = Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position);
+                    if (distanceToAndA < distanceToAndB)
                     {
-                        usingInputA = true;
-                        inputAnd = inputLineAnd;
-                        inputAnd.andGate.connectedPowerLineScriptA = this;
-                        inputAnd.aInUse = true;
-                        transform.position = inputs[i].transform.GetChild(0).transform.position;
-                        transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
-                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
-                        startedTimer = true;
-                        return;
+                        if (!inputLineAnd.aInUse && distanceToAndA < connectToDistance)
+                        {
+                            usingInputA = true;
+                            inputAnd = inputLineAnd;
+                            inputAnd.andGate.connectedPowerLineScriptA = this;
+                            inputAnd.aInUse = true;
+                            transform.position = inputs[i].transform.GetChild(0).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                        if (!inputLineAnd.bInUse && distanceToAndB < connectToDistance)
+                        {
+                            usingInputA = false;
+                            inputAnd = inputLineAnd;
+                            inputAnd.andGate.connectedPowerLineScriptB = this;
+                            inputAnd.bInUse = true;
+                            transform.position = inputs[i].transform.GetChild(1).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
                     }
-                    if (!inputLineAnd.bInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position) < 0.2f)
+                    else
                     {
-                        usingInputA = false;
-                        inputAnd = inputLineAnd;
-                        inputAnd.andGate.connectedPowerLineScriptB = this;
-                        inputAnd.bInUse = true;
-                        transform.position = inputs[i].transform.GetChild(1).transform.position;
-                        transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
-                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
-                        startedTimer = true;
-                        return;
+                        if (!inputLineAnd.bInUse && distanceToAndB < connectToDistance)
+                        {
+                            usingInputA = false;
+                            inputAnd = inputLineAnd;
+                            inputAnd.andGate.connectedPowerLineScriptB = this;
+                            inputAnd.bInUse = true;
+                            transform.position = inputs[i].transform.GetChild(1).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                        if (!inputLineAnd.aInUse && distanceToAndA < connectToDistance)
+                        {
+                            usingInputA = true;
+                            inputAnd = inputLineAnd;
+                            inputAnd.andGate.connectedPowerLineScriptA = this;
+                            inputAnd.aInUse = true;
+                            transform.position = inputs[i].transform.GetChild(0).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
                     }
                     break;
                 case "Input Lines XOR":
                     LocalInputsXor inputLineXor = inputs[i].GetComponent<LocalInputsXor>();
-                    if (!inputLineXor.aInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position) < 0.2f)
+                    float distanceToXorA = Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position);
+                    float distanceToXorB = Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position);
+                    if (distanceToXorA < distanceToXorB)
                     {
-                        usingInputA = true;
-                        inputXor = inputLineXor;
-                        inputXor.xorGate.connectedPowerLineScriptA = this;
-                        inputXor.aInUse = true;
-                        transform.position = inputs[i].transform.GetChild(0).transform.position;
-                        transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
-                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
-                        startedTimer = true;
-                        return;
+                        if (!inputLineXor.aInUse && distanceToXorA < connectToDistance)
+                        {
+                            usingInputA = true;
+                            inputXor = inputLineXor;
+                            inputXor.xorGate.connectedPowerLineScriptA = this;
+                            inputXor.aInUse = true;
+                            transform.position = inputs[i].transform.GetChild(0).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                        if (!inputLineXor.bInUse && distanceToXorB < connectToDistance)
+                        {
+                            usingInputA = false;
+                            inputXor = inputLineXor;
+                            inputXor.xorGate.connectedPowerLineScriptB = this;
+                            inputXor.bInUse = true;
+                            transform.position = inputs[i].transform.GetChild(1).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
                     }
-                    if (!inputLineXor.bInUse && Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position) < 0.2f)
+                    else
                     {
-                        usingInputA = false;
-                        inputXor = inputLineXor;
-                        inputXor.xorGate.connectedPowerLineScriptB = this;
-                        inputXor.bInUse = true;
-                        transform.position = inputs[i].transform.GetChild(1).transform.position;
-                        transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
-                        powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
-                        startedTimer = true;
-                        return;
+                        if (!inputLineXor.bInUse && distanceToXorB < connectToDistance)
+                        {
+                            usingInputA = false;
+                            inputXor = inputLineXor;
+                            inputXor.xorGate.connectedPowerLineScriptB = this;
+                            inputXor.bInUse = true;
+                            transform.position = inputs[i].transform.GetChild(1).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                        if (!inputLineXor.aInUse && distanceToXorA < connectToDistance)
+                        {
+                            usingInputA = true;
+                            inputXor = inputLineXor;
+                            inputXor.xorGate.connectedPowerLineScriptA = this;
+                            inputXor.aInUse = true;
+                            transform.position = inputs[i].transform.GetChild(0).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                            powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
                     }
                     break;
                 default:

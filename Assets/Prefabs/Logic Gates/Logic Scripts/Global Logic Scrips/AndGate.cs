@@ -2,7 +2,7 @@
 using UnityEngine;
 using VRC.SDKBase;
 
-public class ORGate : UdonSharpBehaviour
+public class AndGate : UdonSharpBehaviour
 {
     public Material green;
     public Material red;
@@ -10,7 +10,7 @@ public class ORGate : UdonSharpBehaviour
     public GameObject off;
     public LineRenderer powerLine;
     public PowerLineMover powerLineScript;
-    public InputsOR input;
+    public InputsAnd input;
 
     public PowerLineMover connectedPowerLineScriptA;
     public PowerLineMover connectedPowerLineScriptB;

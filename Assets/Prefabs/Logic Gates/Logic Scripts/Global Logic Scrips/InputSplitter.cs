@@ -46,13 +46,13 @@ public class InputSplitter : UdonSharpBehaviour
         countDownTimer = timeDelayToUpdate;
         if (input)
         {// if input is on, output is on
-            //lineSplitter.OnTrue();
-            lineSplitter.NetworkedOnTrue();
+            lineSplitter.OnTrue();
+            //lineSplitter.NetworkedOnTrue();
         }
         else
         {
-            //lineSplitter.OnFalse();
-            lineSplitter.NetworkedOnFalse();
+            lineSplitter.OnFalse();
+            //lineSplitter.NetworkedOnFalse();
         }
     }
     void SendUpdate()

@@ -22,7 +22,7 @@ public class NotGate : UdonSharpBehaviour
     }
     public void pick()
     {
-        powerLineScript.holding = true;
+        //powerLineScript.holding = true;
         if (input)
         {
             if (powerLineScript.GetConnectedNOTInput() == input)
@@ -41,10 +41,10 @@ public class NotGate : UdonSharpBehaviour
             connectedPowerLineScript.OnPickup();
         }
     }
-    public override void OnDrop()
-    {
-        powerLineScript.holding = false;
-    }
+    //public override void OnDrop()
+    //{
+    //    powerLineScript.holding = false;
+    //}
 
     public override void OnPickupUseDown()
     {// seems like these netowrk even can only call public functions

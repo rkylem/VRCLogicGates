@@ -1,15 +1,18 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-public class InputNOT : UdonSharpBehaviour
+public class InputsAnd : UdonSharpBehaviour
 {
-    public NotGate notGate;
-    public float timeDelayToUpdate = 0.3f;
+    public AndGate andGate;
+
+    public float timeDelayToUpdate = 0.2f;
     float countDownTimer;
     bool startedTimer = false;
 
-    public bool inputSignal = false;
-    public bool inUse = false;
+    public bool inputA = false;
+    public bool inputB = false;
+    public bool aInUse = false;
+    public bool bInUse = false;
 
     void Start()
     {
@@ -32,10 +35,10 @@ public class InputNOT : UdonSharpBehaviour
     // start timer to send the update in input is in use
     public void UpdateGate()
     {
-        if (inUse)
+        if (aInUse || bInUse)
         {
             startedTimer = true;
-        }        
+        }
     }
     // This function will force the gate to update if the input is in use or not.
     // useful for when you removed the connection but still need to send update
@@ -43,56 +46,42 @@ public class InputNOT : UdonSharpBehaviour
     {
         startedTimer = false;
         countDownTimer = timeDelayToUpdate;
-        if (inputSignal)
-        {// if Input on, Not gate is off
-            //don't think I need to network, as this function is only ever called when networking
-            //notGate.NetworkedOnFalse();
-            notGate.OnFalse();
+        if (inputA && inputB)
+        {// if either input is on, output is on
+            andGate.OnTrue();
+            //orGate.NetworkedOnTrue();
         }
         else
         {
-            //notGate.NetworkedOnTrue();
-            notGate.OnTrue();
+            andGate.OnFalse();
+            //orGate.NetworkedOnFalse();
         }
     }
     void SendUpdate()
     {
         // if still in use after the timer
-        if (inUse)
+        if (aInUse || bInUse)
         {
-            if (inputSignal)
-            {// if Input on, Not gate is off
-                notGate.NetworkedOnFalse();
-                //notGate.OnFalse();
+            if (inputA && inputB)
+            {// if either input is on, output is on
+                andGate.NetworkedOnTrue();
+                //orGate.OnTrue();
             }
             else
             {
-                notGate.NetworkedOnTrue();
-                //notGate.OnTrue();
+                //orGate.OnFalse();
+                andGate.NetworkedOnFalse();
             }
         }
     }
-    public bool GetInputSignal()
-    {
-        return inputSignal;
-    }
-    public void SetInputSignal(bool inSignal)
-    {
-        inputSignal = inSignal;
-    }
-    public bool GetInUse()
-    {
-        return inUse;
-    }
-    public void SetInUse(bool _inUse)
-    {
-        inUse = _inUse;
-    }
-    public void ResetInput()
+
+    public void ResetInputs()
     {
         startedTimer = false;
         countDownTimer = timeDelayToUpdate;
-        inputSignal = false;
-        inUse = false;
+        aInUse = false;
+        bInUse = false;
+        inputA = false;
+        inputB = false;
     }
 }

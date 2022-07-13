@@ -45,9 +45,13 @@ public class ChatController : UdonSharpBehaviour
         // Just assuming the message sent might need to send to all
         if (sendSound)
         {
-            sendSound.Play();
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "PlayPopSound");
         }
         input.text = null;
+    }
+    public void PlayPopSound()
+    {
+        sendSound.Play();
     }
 
     public bool badWordsFound(string input)

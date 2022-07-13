@@ -23,8 +23,8 @@ public class LineSplitter : UdonSharpBehaviour
     }
     public void pick()
     {
-        powerLineAScript.holding = true;
-        powerLineBScript.holding = true;
+        //powerLineAScript.holding = true;
+        //powerLineBScript.holding = true;
         if (input)
         {
             // figured out what is happening, we never fully disconnect the last powerline
@@ -56,11 +56,11 @@ public class LineSplitter : UdonSharpBehaviour
             connectedPowerLineScript.OnPickup();
         }
     }
-    public override void OnDrop()
-    {
-        powerLineAScript.holding = false;
-        powerLineBScript.holding = false;
-    }
+    //public override void OnDrop()
+    //{
+    //    powerLineAScript.holding = false;
+    //    powerLineBScript.holding = false;
+    //}
     public override void OnPickupUseDown()
     {// seems like these netowrk even can only call public functions
         // Plan on making this convert the object into a buffer in this case

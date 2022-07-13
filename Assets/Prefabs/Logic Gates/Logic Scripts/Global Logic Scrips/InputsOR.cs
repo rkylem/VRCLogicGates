@@ -48,13 +48,13 @@ public class InputsOR : UdonSharpBehaviour
         countDownTimer = timeDelayToUpdate;
         if (inputA || inputB)
         {// if either input is on, output is on
-            //orGate.OnTrue();
-            orGate.NetworkedOnTrue();
+            orGate.OnTrue();
+            //orGate.NetworkedOnTrue();
         }
         else
         {
-            //orGate.OnFalse();
-            orGate.NetworkedOnFalse();
+            orGate.OnFalse();
+            //orGate.NetworkedOnFalse();
         }
     }
     void SendUpdate()
@@ -83,5 +83,5 @@ public class InputsOR : UdonSharpBehaviour
         bInUse = false;
         inputA = false;
         inputB = false;
-    }    
+    }
 }
