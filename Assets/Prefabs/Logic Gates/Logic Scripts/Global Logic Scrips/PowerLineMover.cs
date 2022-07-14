@@ -18,6 +18,7 @@ public class PowerLineMover : UdonSharpBehaviour
     InputsOR inputOr;
     InputSplitter inputSplitter;
     InputsAnd inputAnd;
+    InputsXor inputXor;
     string inputType = "";
     bool usingInputA = false;
 
@@ -96,7 +97,7 @@ public class PowerLineMover : UdonSharpBehaviour
                 if (inputOr)
                 {
                     if (usingInputA)
-                    {
+                    {// might need to set usingInputA = false; but prob not
                         inputOr.inputA = false;
                         inputOr.aInUse = false;
                     }
@@ -135,7 +136,24 @@ public class PowerLineMover : UdonSharpBehaviour
                     inputAnd = null;
                 }
                 break;
-                    default:
+            case "Input Lines XOR":
+                if (inputXor)
+                {
+                    if (usingInputA)
+                    {
+                        inputXor.inputA = false;
+                        inputXor.aInUse = false;
+                    }
+                    else
+                    {
+                        inputXor.inputB = false;
+                        inputXor.bInUse = false;
+                    }
+                    inputXor.ForceUpdateGate();
+                    inputXor = null;
+                }
+                break;
+            default:
                 break;
         }
     }
@@ -182,7 +200,13 @@ public class PowerLineMover : UdonSharpBehaviour
         }
         if (inputAnd)
         {
+            usingInputA = false;
             inputAnd.ResetInputs();
+        }
+        if (inputXor)
+        {
+            usingInputA = false;
+            inputXor.ResetInputs();
         }
         pick();
         // and reconnect back
@@ -309,6 +333,8 @@ public class PowerLineMover : UdonSharpBehaviour
         inputNot = null;
         inputOr = null;
         inputSplitter = null;
+        inputAnd = null;
+        inputXor = null;
         //holding = false;
         GameObject[] inputs = GetComponentInParent<Transform>().parent.GetComponentInParent<GateSpawner>().inputs;
         // try to connect to an imput.
@@ -476,6 +502,65 @@ public class PowerLineMover : UdonSharpBehaviour
                         }
                     }
                     break;
+                case "Input Lines XOR":
+                    InputsXor inputLineXor = inputs[i].GetComponent<InputsXor>();
+                    float distanceToXorA = Vector3.Distance(transform.position, inputs[i].transform.GetChild(0).transform.position);
+                    float distanceToXorB = Vector3.Distance(transform.position, inputs[i].transform.GetChild(1).transform.position);
+                    if (distanceToXorA < distanceToXorB)
+                    {// if input is not in use and less than 0.2 units away connect
+                        if (!inputLineXor.aInUse && distanceToXorA < 0.2f)
+                        {
+                            usingInputA = true;
+                            inputXor = inputLineXor;
+                            inputXor.xorGate.connectedPowerLineScriptA = this;
+                            inputXor.aInUse = true;
+                            transform.position = inputs[i].transform.GetChild(0).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                            //powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                        if (!inputLineXor.bInUse && distanceToXorB < 0.2f)
+                        {
+                            usingInputA = false;
+                            inputXor = inputLineXor;
+                            inputXor.xorGate.connectedPowerLineScriptB = this;
+                            inputXor.bInUse = true;
+                            transform.position = inputs[i].transform.GetChild(1).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                            //powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (!inputLineXor.bInUse && distanceToXorB < 0.2f)
+                        {
+                            usingInputA = false;
+                            inputXor = inputLineXor;
+                            inputXor.xorGate.connectedPowerLineScriptB = this;
+                            inputXor.bInUse = true;
+                            transform.position = inputs[i].transform.GetChild(1).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(1).transform.rotation;
+                            //powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                        if (!inputLineXor.aInUse && distanceToXorA < 0.2f)
+                        {
+                            usingInputA = true;
+                            inputXor = inputLineXor;
+                            inputXor.xorGate.connectedPowerLineScriptA = this;
+                            inputXor.aInUse = true;
+                            transform.position = inputs[i].transform.GetChild(0).transform.position;
+                            transform.rotation = inputs[i].transform.GetChild(0).transform.rotation;
+                            //powerLine.SetPosition(1, transform.position - transform.parent.transform.position);
+                            startedTimer = true;
+                            return;
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
@@ -592,6 +677,14 @@ public class PowerLineMover : UdonSharpBehaviour
     {
         return inputSplitter;
     }
+    public InputsAnd GetConnectedANDInput()
+    {
+        return inputAnd;
+    }
+    public InputsXor GetConnectedXORInput()
+    {
+        return inputXor;
+    }
 
     public void SetNotNull()
     {
@@ -610,5 +703,7 @@ public class PowerLineMover : UdonSharpBehaviour
         inputNot = null;
         inputOr = null;
         inputSplitter = null;
+        inputAnd = null;
+        inputXor = null;
     }
 }

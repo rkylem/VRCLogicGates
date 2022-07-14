@@ -1,9 +1,9 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-public class InputsAnd : UdonSharpBehaviour
+public class InputsXor : UdonSharpBehaviour
 {
-    public AndGate andGate;
+    public XorGate xorGate;
 
     public float timeDelayToUpdate = 0.2f;
     float countDownTimer;
@@ -46,14 +46,14 @@ public class InputsAnd : UdonSharpBehaviour
     {
         startedTimer = false;
         countDownTimer = timeDelayToUpdate;
-        if (inputA && inputB)
+        if (inputA ^ inputB)
         {// if either input is on, output is on
-            andGate.OnTrue();
+            xorGate.OnTrue();
             //orGate.NetworkedOnTrue();
         }
         else
         {
-            andGate.OnFalse();
+            xorGate.OnFalse();
             //orGate.NetworkedOnFalse();
         }
     }
@@ -62,15 +62,15 @@ public class InputsAnd : UdonSharpBehaviour
         // if still in use after the timer
         if (aInUse || bInUse)
         {
-            if (inputA && inputB)
+            if (inputA ^ inputB)
             {// if either input is on, output is on
-                andGate.NetworkedOnTrue();
+                xorGate.NetworkedOnTrue();
                 //orGate.OnTrue();
             }
             else
             {
                 //orGate.OnFalse();
-                andGate.NetworkedOnFalse();
+                xorGate.NetworkedOnFalse();
             }
         }
     }

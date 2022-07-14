@@ -2,7 +2,7 @@
 using UnityEngine;
 using VRC.SDKBase;
 
-public class AndGate : UdonSharpBehaviour
+public class XorGate : UdonSharpBehaviour
 {
     public Material green;
     public Material red;
@@ -10,7 +10,7 @@ public class AndGate : UdonSharpBehaviour
     public GameObject off;
     public LineRenderer powerLine;
     public PowerLineMover powerLineScript;
-    public InputsAnd input;
+    public InputsXor input;
 
     public PowerLineMover connectedPowerLineScriptA;
     public PowerLineMover connectedPowerLineScriptB;
@@ -30,7 +30,7 @@ public class AndGate : UdonSharpBehaviour
             input.bInUse = false;
             input.inputA = false;
             input.inputB = false;
-            if (powerLineScript.GetConnectedANDInput() == input)
+            if (powerLineScript.GetConnectedXORInput() == input)
             {
                 powerLineScript.OnPickup();
             }
