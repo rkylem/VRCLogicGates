@@ -27,7 +27,8 @@ public class NotGate : UdonSharpBehaviour
         {
             if (powerLineScript.GetConnectedNOTInput() == input)
             {
-                powerLineScript.OnPickup();
+                powerLineScript.pick();
+                //powerLineScript.OnPickup();
             }
             else
             {
@@ -38,7 +39,8 @@ public class NotGate : UdonSharpBehaviour
         }
         if (connectedPowerLineScript)
         {
-            connectedPowerLineScript.OnPickup();
+            connectedPowerLineScript.pick();
+            //connectedPowerLineScript.OnPickup();
         }
     }
     //public override void OnDrop()

@@ -32,7 +32,8 @@ public class AndGate : UdonSharpBehaviour
             input.inputB = false;
             if (powerLineScript.GetConnectedANDInput() == input)
             {
-                powerLineScript.OnPickup();
+                powerLineScript.pick();
+                //powerLineScript.OnPickup();
             }
             else
             {
@@ -41,11 +42,13 @@ public class AndGate : UdonSharpBehaviour
         }
         if (connectedPowerLineScriptA)
         {
-            connectedPowerLineScriptA.OnPickup();
+            connectedPowerLineScriptA.pick();
+            //connectedPowerLineScriptA.OnPickup();
         }
         if (connectedPowerLineScriptB)
         {
-            connectedPowerLineScriptB.OnPickup();
+            connectedPowerLineScriptB.pick();
+            //connectedPowerLineScriptB.OnPickup();
         }
     }
     //public override void OnDrop()

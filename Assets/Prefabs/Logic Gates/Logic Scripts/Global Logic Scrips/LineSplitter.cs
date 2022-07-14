@@ -38,11 +38,13 @@ public class LineSplitter : UdonSharpBehaviour
 
             if (powerLineAScript.GetConnectedSplitterInput() == input)
             {
-                powerLineAScript.OnPickup();
+                powerLineAScript.pick();
+                //powerLineAScript.OnPickup();
             }
             if (powerLineBScript.GetConnectedSplitterInput() == input)
             {
-                powerLineBScript.OnPickup();
+                powerLineBScript.pick();
+                //powerLineBScript.OnPickup();
             }
             // can save on some performance here some how...
             // maybe instead of calling on Pickup I set the input to null
@@ -53,7 +55,8 @@ public class LineSplitter : UdonSharpBehaviour
         }
         if (connectedPowerLineScript)
         {
-            connectedPowerLineScript.OnPickup();
+            connectedPowerLineScript.pick();
+            //connectedPowerLineScript.OnPickup();
         }
     }
     //public override void OnDrop()

@@ -660,6 +660,34 @@ public class PowerLineMover : UdonSharpBehaviour
                     inputAnd.UpdateGate();
                 }
                 break;
+            case "Input Lines XOR":
+                if (inputXor)
+                {
+                    if (usingInputA)
+                    {// Got a cheaky workaround... if the inputs aren't in use then they can't be true
+                        if (inputXor.aInUse)
+                        {
+                            inputXor.inputA = updateState;
+                        }
+                        else
+                        {
+                            inputXor.inputA = false;
+                        }
+                    }
+                    else
+                    {
+                        if (inputXor.bInUse)
+                        {
+                            inputXor.inputB = updateState;
+                        }
+                        else
+                        {
+                            inputXor.inputB = false;
+                        }
+                    }
+                    inputXor.UpdateGate();
+                }
+                break;
             default:
                 break;
         }

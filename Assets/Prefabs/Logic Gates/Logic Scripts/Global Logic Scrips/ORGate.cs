@@ -32,7 +32,8 @@ public class ORGate : UdonSharpBehaviour
             input.inputB = false;
             if (powerLineScript.GetConnectedORInput() == input)
             {
-                powerLineScript.OnPickup();
+                powerLineScript.pick();
+                //powerLineScript.OnPickup();
             }
             else
             {
@@ -41,11 +42,13 @@ public class ORGate : UdonSharpBehaviour
         }
         if (connectedPowerLineScriptA)
         {
-            connectedPowerLineScriptA.OnPickup();
+            connectedPowerLineScriptA.pick();
+            //connectedPowerLineScriptA.OnPickup();
         }
         if (connectedPowerLineScriptB)
         {
-            connectedPowerLineScriptB.OnPickup();
+            connectedPowerLineScriptB.pick();
+            //connectedPowerLineScriptB.OnPickup();
         }
     }
     //public override void OnDrop()

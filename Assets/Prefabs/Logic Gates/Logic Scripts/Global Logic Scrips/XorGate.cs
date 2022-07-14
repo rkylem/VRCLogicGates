@@ -31,8 +31,9 @@ public class XorGate : UdonSharpBehaviour
             input.inputA = false;
             input.inputB = false;
             if (powerLineScript.GetConnectedXORInput() == input)
-            {
-                powerLineScript.OnPickup();
+            {// should just need to call pick as this is already networked?
+                powerLineScript.pick();
+                //powerLineScript.OnPickup();
             }
             else
             {
@@ -41,11 +42,13 @@ public class XorGate : UdonSharpBehaviour
         }
         if (connectedPowerLineScriptA)
         {
-            connectedPowerLineScriptA.OnPickup();
+            connectedPowerLineScriptA.pick();
+            //connectedPowerLineScriptA.OnPickup();
         }
         if (connectedPowerLineScriptB)
         {
-            connectedPowerLineScriptB.OnPickup();
+            connectedPowerLineScriptB.pick();
+            //connectedPowerLineScriptB.OnPickup();
         }
     }
     //public override void OnDrop()
